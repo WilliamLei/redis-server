@@ -178,5 +178,27 @@ public class RedisServerServiceImpl implements RedisServerService {
 		}
 	}
 
+	@Override
+	public long leftPush(Object key, Object value) {
+		return leftPush(key, value, null, null);
+	}
+
+	@Override
+	public long leftPush(Object key, Object value, Long expireTime, TimeUnit unit) {
+		if (key == null || StringUtils.isEmpty(key.toString()) || value == null
+				|| StringUtils.isEmpty(value.toString())) {
+			return 0L;
+		}
+		if(unit == null) {
+			unit = TimeUnit.MILLISECONDS;
+		}
+		long count = redisTemplate.opsForList().leftPush(key, value);
+		
+		if (expireTime != null && expireTime.longValue() > 0) {
+			redisTemplate.expire(key, expireTime, unit);
+		}
+		return count;
+	}
+
 	
 }

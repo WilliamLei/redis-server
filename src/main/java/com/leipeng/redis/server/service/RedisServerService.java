@@ -28,8 +28,8 @@ public interface RedisServerService {
 	void sadd(Object key, Object[] values, Long expireTime, TimeUnit unit);
 
 	// list
-	long leftPush(Object obj, Object value);
+	long leftPush(Object key, Object value);
 	
-	long leftPush(Object obj, Object value, Long expireTime, TimeUnit unit);
+	long leftPush(Object key, Object value, Long expireTime, TimeUnit unit);
 	
 }
