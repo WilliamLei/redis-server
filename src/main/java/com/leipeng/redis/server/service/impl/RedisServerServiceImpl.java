@@ -1,5 +1,5 @@
-package com.leipeng.redis.server.service.impl;
 
+package com.leipeng.redis.server.service.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
-import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
@@ -331,8 +330,86 @@ public class RedisServerServiceImpl implements RedisServerService {
 	}
 
 	@Override
-	public <T> List<T> leftPop(String key) {
-		return null;
+	@SuppressWarnings("unchecked")
+	public <T> T leftPop(String key, Class<T> clazz) {
+		if(StringUtils.isEmpty(key)) {
+			return null;
+		}
+		
+		return (T) redisTemplate.opsForList().leftPop(key);
+	}
+
+	@Override
+	public <T> List<T> leftPop(String key, Class<T> clazz, int num) {
+		List<T> ret = new ArrayList<T>();
+		if(StringUtils.isEmpty(key) || num <= 0) {
+			return ret;
+		}
+		
+		if(num == 1) {
+			ret.add(leftPop(key, clazz));
+			return ret;
+		}
+		
+		RedisCallback<List<T>> action = new RedisCallback<List<T>>() {
+			@Override
+			public List<T> doInRedis(RedisConnection connection) throws DataAccessException {
+				List<T> ret = new ArrayList<T>();
+				byte[] keyBytes = keySerializer.serialize(key);
+				
+				for(int i = 0 ; i < num ; i++) {
+					byte[] value = connection.lPop(keyBytes);
+					if(value == null || value.length <= 0) {
+						break;
+					}
+					ret.add(valueSerializer.deserialize(value, clazz));
+				}
+				return ret;
+			}
+		};
+		
+		return Redis.execute(redisTemplate, action);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T rightPop(String key, Class<T> clazz) {
+		if(StringUtils.isEmpty(key)) {
+			return null;
+		}
+		return (T) redisTemplate.opsForList().rightPop(key);
+	}
+
+	@Override
+	public <T> List<T> rightPop(String key, Class<T> clazz, int num) {
+		List<T> ret = new ArrayList<T>();
+		if(StringUtils.isEmpty(key) || num <= 0) {
+			return ret;
+		}
+		
+		if(num == 1) {
+			ret.add(rightPop(key, clazz));
+			return ret;
+		}
+		
+		RedisCallback<List<T>> action = new RedisCallback<List<T>>() {
+			@Override
+			public List<T> doInRedis(RedisConnection connection) throws DataAccessException {
+				List<T> ret = new ArrayList<T>();
+				byte[] keyBytes = keySerializer.serialize(key);
+				
+				for(int i = 0 ; i < num ; i++) {
+					byte[] value = connection.rPop(keyBytes);
+					if(value == null || value.length <= 0) {
+						break;
+					}
+					ret.add(valueSerializer.deserialize(value, clazz));
+				}
+				return ret;
+			}
+		};
+		
+		return Redis.execute(redisTemplate, action);
 	}
 	
 	

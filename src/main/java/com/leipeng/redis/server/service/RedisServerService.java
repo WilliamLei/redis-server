@@ -35,7 +35,7 @@ public interface RedisServerService {
 	long rightPushAll(String key, Object[] values);
 
 	long rightPushAll(String key, Object[] values, Long expireTime, TimeUnit unit);
-	
+
 	long leftPush(String key, Object value);
 
 	long leftPush(String key, Object value, Long expireTime, TimeUnit unit);
@@ -43,12 +43,18 @@ public interface RedisServerService {
 	long leftPushAll(String key, Object[] values);
 
 	long leftPushAll(String key, Object[] values, Long expireTime, TimeUnit unit);
-	
+
 	long llength(String key);
-	
+
 	<T> List<T> range(String key, Class<T> clazz);
-	
+
 	<T> List<T> range(String key, Class<T> clazz, long start, long end);
 
-	<T> List<T> leftPop(String key);
+	<T> T leftPop(String key, Class<T> clazz);
+
+	<T> List<T> leftPop(String key, Class<T> clazz, int num);
+
+	<T> T rightPop(String key, Class<T> clazz);
+
+	<T> List<T> rightPop(String key, Class<T> clazz, int num);
 }
