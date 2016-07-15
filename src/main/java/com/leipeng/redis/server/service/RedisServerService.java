@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.redis.connection.RedisZSetCommands.Tuple;
+
 public interface RedisServerService {
 
 	void set(String key, Object value);
@@ -57,4 +59,14 @@ public interface RedisServerService {
 	<T> T rightPop(String key, Class<T> clazz);
 
 	<T> List<T> rightPop(String key, Class<T> clazz, int num);
+	
+	//Zset
+	long zAdd(String key, Object value, double score);
+	
+	long zAdd(String key, Object value, double score, Long expireTime, TimeUnit unit);
+	
+	long zAddAll(String key, Map<Object, Double> tuples);
+	
+	long zAddAll(String key, Map<Object, Double> tuples, Long expireTime, TimeUnit unit);
+	
 }

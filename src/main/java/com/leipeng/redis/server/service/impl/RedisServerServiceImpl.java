@@ -2,12 +2,15 @@
 package com.leipeng.redis.server.service.impl;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Formattable;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
+import org.junit.rules.ExpectedException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
@@ -411,6 +414,72 @@ public class RedisServerServiceImpl implements RedisServerService {
 		
 		return Redis.execute(redisTemplate, action);
 	}
-	
-	
+
+	// Zset
+	@Override
+	public long zAdd(String key, Object value, double score) {
+		return zAdd(key, value, score, null, null);
+	}
+
+	@Override
+	public long zAdd(String key, Object value, double score, Long expireTime, TimeUnit unit) {
+		if(StringUtils.isEmpty(key)) {
+			return 0l;
+		}
+		
+		if(expireTime == null || expireTime.longValue() <= 0) {
+			return redisTemplate.opsForZSet().add(key, value, score) ? 1l : 0l;
+		}
+		
+		unit = unit == null ? TimeUnit.MILLISECONDS : unit;
+		
+		final Long expireSeconds = Redis.convert(expireTime, unit);
+		
+		RedisCallback<Long> action = new RedisCallback<Long>() {			
+			@Override
+			public Long doInRedis(RedisConnection connection) throws DataAccessException {				
+				byte[] keyBytes = keySerializer.serialize(key);
+				Long ret = connection.zAdd(keyBytes, score, valueSerializer.serialize(value)) ? 1L : 0L;
+				connection.expire(keyBytes, expireSeconds);
+				return ret;
+			}
+		};
+		
+		return Redis.execute(redisTemplate, action);
+	}
+
+	@Override
+	public long zAddAll(String key, Map<Object, Double> tuples) {
+		return zAddAll(key, tuples, null, null);
+	}
+
+	@Override
+	public long zAddAll(String key, Map<Object, Double> tuples, Long expireTime, TimeUnit unit) {
+		if(StringUtils.isEmpty(key) || tuples == null || tuples.size() <= 0) {
+			return 0;
+		}
+		
+		final Long expireSeconds = Redis.convert(expireTime, unit);
+		
+		RedisCallback<Long> action = new RedisCallback<Long>() {
+
+			@Override
+			public Long doInRedis(RedisConnection connection) throws DataAccessException {
+				long ret = 0;
+				
+				byte[] keyBytes = keySerializer.serialize(key);
+				for(Entry<Object, Double> tuple : tuples.entrySet()) {
+					ret += (connection.zAdd(keyBytes, tuple.getValue().doubleValue(), valueSerializer.serialize(tuple.getKey())) ? 1 : 0);
+				}
+				
+				if(expireSeconds != null && expireSeconds.longValue() > 0) {
+					connection.expire(keyBytes, expireSeconds);
+				}
+				return ret;
+			}
+		};
+		
+		return Redis.execute(redisTemplate, action);
+	}
+		
 }
