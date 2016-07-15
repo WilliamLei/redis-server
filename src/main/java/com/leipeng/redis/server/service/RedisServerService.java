@@ -43,4 +43,12 @@ public interface RedisServerService {
 	long leftPushAll(String key, Object[] values);
 
 	long leftPushAll(String key, Object[] values, Long expireTime, TimeUnit unit);
+	
+	long llength(String key);
+	
+	<T> List<T> range(String key, Class<T> clazz);
+	
+	<T> List<T> range(String key, Class<T> clazz, long start, long end);
+
+	<T> List<T> leftPop(String key);
 }

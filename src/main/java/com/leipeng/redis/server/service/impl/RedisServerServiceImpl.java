@@ -1,5 +1,6 @@
 package com.leipeng.redis.server.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
+import org.aspectj.lang.annotation.SuppressAjWarnings;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
@@ -219,7 +221,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 				public Long doInRedis(RedisConnection connection) throws DataAccessException {
 					byte[][] valueBytes = new byte[values.length][];
 					int i = 0;
-					for(Object value: values) {
+					for (Object value : values) {
 						valueBytes[i++] = valueSerializer.serialize(value);
 					}
 					Long result = connection.lPush(keySerializer.serialize(key), valueBytes);
@@ -292,7 +294,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 				public Long doInRedis(RedisConnection connection) throws DataAccessException {
 					byte[][] valueBytes = new byte[values.length][];
 					int i = 0;
-					for(Object value: values) {
+					for (Object value : values) {
 						valueBytes[i++] = valueSerializer.serialize(value);
 					}
 					Long result = connection.rPush(keySerializer.serialize(key), valueBytes);
@@ -306,7 +308,32 @@ public class RedisServerServiceImpl implements RedisServerService {
 		return count == null ? 0l : count.longValue();
 	}
 
-	
+	@Override
+	public long llength(String key) {
+		if (StringUtils.isEmpty(key)) {
+			return 0L;
+		}
+		return redisTemplate.opsForList().size(key);
+	}
+
+	@Override
+	public <T> List<T> range(String key, Class<T> clazz) {		
+		return range(key, clazz, 1, llength(key));
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> List<T> range(String key, Class<T> clazz, long start, long end) {
+		if(StringUtils.isEmpty(key) || clazz == null || start < end) {
+			return new ArrayList<T>();
+		}
+		return (List<T>) redisTemplate.opsForList().range(key, start, end);
+	}
+
+	@Override
+	public <T> List<T> leftPop(String key) {
+		return null;
+	}
 	
 	
 }
