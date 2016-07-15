@@ -1,6 +1,7 @@
 package com.leipeng.redis.server.service.impl;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +30,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Resource(name = "stringSerializer")
 	private StringRedisSerializer keySerializer;
-	
+
 	// key - value
 	@Override
 	public void set(Object key, Object value) {
@@ -64,6 +65,12 @@ public class RedisServerServiceImpl implements RedisServerService {
 			return;
 		}
 		final Long finalExpireTime = convert(expireTime, unit);
+		
+		if(finalExpireTime == null || finalExpireTime.longValue() <= 0) {
+			redisTemplate.opsForValue().multiSet(pairs);
+			return;
+		}
+		
 		redisTemplate.executePipelined(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -85,15 +92,15 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	private Long convert(Long source, TimeUnit unit) {
 		// 默认为毫秒，最终转化结果为秒
-		if(source == null) {
+		if (source == null) {
 			return null;
 		}
-		
-		if(unit == null) {
+
+		if (unit == null) {
 			unit = TimeUnit.MILLISECONDS;
 		}
-		
-		if(unit == TimeUnit.MILLISECONDS) {
+
+		if (unit == TimeUnit.MILLISECONDS) {
 			source = source / 1000;
 		} else if (unit == TimeUnit.MINUTES) {
 			source = source * 60;
@@ -102,11 +109,11 @@ public class RedisServerServiceImpl implements RedisServerService {
 		} else if (unit == TimeUnit.DAYS) {
 			source = source * 60 * 60 * 24;
 		}
-		
-		if(source.longValue() <= 0) {
+
+		if (source.longValue() <= 0) {
 			return 1L;
 		}
-		
+
 		return source.longValue();
 	}
 
@@ -123,7 +130,6 @@ public class RedisServerServiceImpl implements RedisServerService {
 		return ret;
 	}
 
-	
 	// set
 	@Override
 	public void sadd(Object key, Object value) {
@@ -168,7 +174,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 			redisTemplate.executePipelined(new RedisCallback<Object>() {
 				@Override
 				public Object doInRedis(RedisConnection connection) throws DataAccessException {
-					for(Object value : values) {
+					for (Object value : values) {
 						connection.sAdd(keySerializer.serialize(key.toString()), valueSerializer.serialize(value));
 					}
 					connection.expire(keySerializer.serialize(key.toString()), finalExpireTime);
@@ -189,16 +195,15 @@ public class RedisServerServiceImpl implements RedisServerService {
 				|| StringUtils.isEmpty(value.toString())) {
 			return 0L;
 		}
-		if(unit == null) {
+		if (unit == null) {
 			unit = TimeUnit.MILLISECONDS;
 		}
 		long count = redisTemplate.opsForList().leftPush(key, value);
-		
+
 		if (expireTime != null && expireTime.longValue() > 0) {
 			redisTemplate.expire(key, expireTime, unit);
 		}
 		return count;
 	}
 
-	
 }
