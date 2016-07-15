@@ -1,7 +1,6 @@
 package com.leipeng.redis.server.service.impl;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -18,12 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.leipeng.redis.server.service.RedisServerService;
+import com.leipeng.redis.server.service.util.Redis;
 
 @Service("redisServerService")
 public class RedisServerServiceImpl implements RedisServerService {
 
 	@Resource(name = "objRedisTemplate")
-	private RedisTemplate<Object, Object> redisTemplate;
+	private RedisTemplate<String, Object> redisTemplate;
 
 	@Resource(name = "valueSerializer")
 	private GenericJackson2JsonRedisSerializer valueSerializer;
@@ -33,12 +33,12 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	// key - value
 	@Override
-	public void set(Object key, Object value) {
+	public void set(String key, Object value) {
 		set(key, value);
 	}
 
 	@Override
-	public void set(Object key, Object value, Long expireTime, TimeUnit unit) {
+	public void set(String key, Object value, Long expireTime, TimeUnit unit) {
 		if (key == null || StringUtils.isEmpty(key.toString()) || value == null
 				|| StringUtils.isEmpty(value.toString())) {
 			return;
@@ -55,22 +55,22 @@ public class RedisServerServiceImpl implements RedisServerService {
 	}
 
 	@Override
-	public void multiSet(Map<Object, Object> pairs) {
+	public void multiSet(Map<String, Object> pairs) {
 		multiSet(pairs, null, null);
 	}
 
 	@Override
-	public void multiSet(Map<Object, Object> pairs, Long expireTime, TimeUnit unit) {
+	public void multiSet(Map<String, Object> pairs, Long expireTime, TimeUnit unit) {
 		if (pairs == null || pairs.size() <= 0) {
 			return;
 		}
-		final Long finalExpireTime = convert(expireTime, unit);
-		
-		if(finalExpireTime == null || finalExpireTime.longValue() <= 0) {
+		final Long finalExpireTime = Redis.convert(expireTime, unit);
+
+		if (finalExpireTime == null || finalExpireTime.longValue() <= 0) {
 			redisTemplate.opsForValue().multiSet(pairs);
 			return;
 		}
-		
+
 		redisTemplate.executePipelined(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -90,59 +90,32 @@ public class RedisServerServiceImpl implements RedisServerService {
 		});
 	}
 
-	private Long convert(Long source, TimeUnit unit) {
-		// 默认为毫秒，最终转化结果为秒
-		if (source == null) {
-			return null;
-		}
-
-		if (unit == null) {
-			unit = TimeUnit.MILLISECONDS;
-		}
-
-		if (unit == TimeUnit.MILLISECONDS) {
-			source = source / 1000;
-		} else if (unit == TimeUnit.MINUTES) {
-			source = source * 60;
-		} else if (unit == TimeUnit.HOURS) {
-			source = source * 60 * 60;
-		} else if (unit == TimeUnit.DAYS) {
-			source = source * 60 * 60 * 24;
-		}
-
-		if (source.longValue() <= 0) {
-			return 1L;
-		}
-
-		return source.longValue();
-	}
-
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T get(Object key, Class<T> clazz) {
+	public <T> T get(String key, Class<T> clazz) {
 		return (T) redisTemplate.opsForValue().get(key);
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> List<T> multiGet(Collection<Object> keys, Class<T> clazz) {
+	public <T> List<T> multiGet(Collection<String> keys, Class<T> clazz) {
 		List<T> ret = (List<T>) redisTemplate.opsForValue().multiGet(keys);
 		return ret;
 	}
 
 	// set
 	@Override
-	public void sadd(Object key, Object value) {
+	public void sadd(String key, Object value) {
 		sadd(key, value, null, null);
 	}
 
 	@Override
-	public void sadd(Object key, Object value, Long expireTime, TimeUnit unit) {
+	public void sadd(String key, Object value, Long expireTime, TimeUnit unit) {
 		if (key == null || StringUtils.isEmpty(key.toString()) || value == null
 				|| StringUtils.isEmpty(value.toString())) {
 			return;
 		}
-		final Long finalExpireTime = convert(expireTime, unit);
+		final Long finalExpireTime = Redis.convert(expireTime, unit);
 		if (expireTime == null || expireTime.longValue() <= 0) {
 			redisTemplate.opsForSet().add(key, value);
 		} else {
@@ -158,17 +131,18 @@ public class RedisServerServiceImpl implements RedisServerService {
 	}
 
 	@Override
-	public void sadd(Object key, Object[] values) {
+	public void sadd(String key, Object[] values) {
 		sadd(key, values, null, null);
 	}
 
 	@Override
-	public void sadd(Object key, Object[] values, Long expireTime, TimeUnit unit) {
+	public void sadd(String key, Object[] values, Long expireTime, TimeUnit unit) {
 		if (key == null || StringUtils.isEmpty(key.toString()) || values == null || values.length <= 0) {
 			return;
 		}
-		final Long finalExpireTime = convert(expireTime, unit);
-		if (expireTime == null || expireTime.longValue() <= 0) {
+		final Long finalExpireTime = Redis.convert(expireTime, unit);
+
+		if (finalExpireTime == null || finalExpireTime.longValue() <= 0) {
 			redisTemplate.opsForSet().add(key, values);
 		} else {
 			redisTemplate.executePipelined(new RedisCallback<Object>() {
@@ -184,26 +158,155 @@ public class RedisServerServiceImpl implements RedisServerService {
 		}
 	}
 
+	// List
 	@Override
-	public long leftPush(Object key, Object value) {
+	public long leftPush(String key, Object value) {
 		return leftPush(key, value, null, null);
 	}
 
 	@Override
-	public long leftPush(Object key, Object value, Long expireTime, TimeUnit unit) {
-		if (key == null || StringUtils.isEmpty(key.toString()) || value == null
-				|| StringUtils.isEmpty(value.toString())) {
+	public long leftPush(String key, Object value, Long expireTime, TimeUnit unit) {
+		if (key == null || StringUtils.isEmpty(key) || value == null || StringUtils.isEmpty(value.toString())) {
 			return 0L;
 		}
 		if (unit == null) {
 			unit = TimeUnit.MILLISECONDS;
 		}
-		long count = redisTemplate.opsForList().leftPush(key, value);
 
-		if (expireTime != null && expireTime.longValue() > 0) {
-			redisTemplate.expire(key, expireTime, unit);
+		Long count = 0L;
+
+		Long finalExpireTime = Redis.convert(expireTime, unit);
+		if (finalExpireTime == null) {
+			count = redisTemplate.opsForList().leftPush(key, value);
+		} else {
+			RedisCallback<Long> action = new RedisCallback<Long>() {
+				@Override
+				public Long doInRedis(RedisConnection connection) throws DataAccessException {
+					Long result = connection.lPush(keySerializer.serialize(key), valueSerializer.serialize(value));
+					connection.expire(keySerializer.serialize(key), finalExpireTime);
+					return result;
+				}
+			};
+			count = Redis.execute(redisTemplate, action);
 		}
-		return count;
+
+		return count == null ? 0 : count.longValue();
 	}
 
+	@Override
+	public long leftPushAll(String key, Object[] values) {
+		return leftPush(key, values, null, null);
+	}
+
+	@Override
+	public long leftPushAll(String key, Object[] values, Long expireTime, TimeUnit unit) {
+		if (StringUtils.isEmpty(key) || values == null || values.length <= 0) {
+			return 0;
+		}
+
+		if (unit == null) {
+			unit = TimeUnit.MICROSECONDS;
+		}
+
+		Long count = 0L;
+
+		final Long finalExpireSeconds = Redis.convert(expireTime, unit);
+		if (finalExpireSeconds == null || finalExpireSeconds.longValue() <= 0) {
+			count = redisTemplate.opsForList().leftPushAll(key, values);
+		} else {
+			RedisCallback<Long> action = new RedisCallback<Long>() {
+				@Override
+				public Long doInRedis(RedisConnection connection) throws DataAccessException {
+					byte[][] valueBytes = new byte[values.length][];
+					int i = 0;
+					for(Object value: values) {
+						valueBytes[i++] = valueSerializer.serialize(value);
+					}
+					Long result = connection.lPush(keySerializer.serialize(key), valueBytes);
+					connection.expire(keySerializer.serialize(key), finalExpireSeconds);
+					return result;
+				}
+			};
+			count = Redis.execute(redisTemplate, action);
+		}
+
+		return count == null ? 0l : count.longValue();
+	}
+
+	public long rightPush(String key, Object value) {
+		return leftPush(key, value, null, null);
+	}
+
+	@Override
+	public long rightPush(String key, Object value, Long expireTime, TimeUnit unit) {
+		if (key == null || StringUtils.isEmpty(key) || value == null || StringUtils.isEmpty(value.toString())) {
+			return 0L;
+		}
+		if (unit == null) {
+			unit = TimeUnit.MILLISECONDS;
+		}
+
+		Long count = 0L;
+
+		Long finalExpireTime = Redis.convert(expireTime, unit);
+		if (finalExpireTime == null) {
+			count = redisTemplate.opsForList().rightPush(key, value);
+		} else {
+			RedisCallback<Long> action = new RedisCallback<Long>() {
+				@Override
+				public Long doInRedis(RedisConnection connection) throws DataAccessException {
+					Long result = connection.rPush(keySerializer.serialize(key), valueSerializer.serialize(value));
+					connection.expire(keySerializer.serialize(key), finalExpireTime);
+					return result;
+				}
+			};
+			count = Redis.execute(redisTemplate, action);
+		}
+
+		return count == null ? 0 : count.longValue();
+	}
+
+	@Override
+	public long rightPushAll(String key, Object[] values) {
+		return leftPush(key, values, null, null);
+	}
+
+	@Override
+	public long rightPushAll(String key, Object[] values, Long expireTime, TimeUnit unit) {
+		if (StringUtils.isEmpty(key) || values == null || values.length <= 0) {
+			return 0;
+		}
+
+		if (unit == null) {
+			unit = TimeUnit.MICROSECONDS;
+		}
+
+		Long count = 0L;
+
+		final Long finalExpireSeconds = Redis.convert(expireTime, unit);
+		if (finalExpireSeconds == null || finalExpireSeconds.longValue() <= 0) {
+			count = redisTemplate.opsForList().rightPushAll(key, values);
+		} else {
+			RedisCallback<Long> action = new RedisCallback<Long>() {
+				@Override
+				public Long doInRedis(RedisConnection connection) throws DataAccessException {
+					byte[][] valueBytes = new byte[values.length][];
+					int i = 0;
+					for(Object value: values) {
+						valueBytes[i++] = valueSerializer.serialize(value);
+					}
+					Long result = connection.rPush(keySerializer.serialize(key), valueBytes);
+					connection.expire(keySerializer.serialize(key), finalExpireSeconds);
+					return result;
+				}
+			};
+			count = Redis.execute(redisTemplate, action);
+		}
+
+		return count == null ? 0l : count.longValue();
+	}
+
+	
+	
+	
 }

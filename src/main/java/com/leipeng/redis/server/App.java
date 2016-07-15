@@ -21,7 +21,7 @@ public class App {
 		ApplicationContext context = new ClassPathXmlApplicationContext(
 				new String[] { "classpath*:/spring/app-context.xml" });
 		RedisServerService redisServerService = context.getBean(RedisServerService.class);
-		Map<Object, Object> map = new HashMap<Object, Object>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("4", new RedisModel("leipeng1", "leipeng1"));
 		map.put("3", new RedisModel("leipeng2", "leipeng2"));
 		redisServerService.multiSet(map);
@@ -30,7 +30,7 @@ public class App {
 		System.out.println(model.getUsername());
 		System.out.println(model.getPassword());
 		
-		Set<Object> keys = new HashSet<Object>();
+		Set<String> keys = new HashSet<String>();
 		keys.add("3");
 		keys.add("4");
 		

@@ -7,29 +7,40 @@ import java.util.concurrent.TimeUnit;
 
 public interface RedisServerService {
 
-	void set(Object key, Object value);
+	void set(String key, Object value);
 
-	void set(Object key, Object value, Long expireTime, TimeUnit unit);
+	void set(String key, Object value, Long expireTime, TimeUnit unit);
 
-	void multiSet(Map<Object, Object> pairs);
+	void multiSet(Map<String, Object> pairs);
 
-	void multiSet(Map<Object, Object> pairs, Long expireTime, TimeUnit unit);
+	void multiSet(Map<String, Object> pairs, Long expireTime, TimeUnit unit);
 
-	<T> T get(Object key, Class<T> clazz);
+	<T> T get(String key, Class<T> clazz);
 
-	<T> List<T> multiGet(Collection<Object> keys, Class<T> clazz);
-	
-	void sadd(Object key, Object value);
-	
-	void sadd(Object key, Object[] values);
-	
-	void sadd(Object key, Object value, Long expireTime, TimeUnit unit);
-	
-	void sadd(Object key, Object[] values, Long expireTime, TimeUnit unit);
+	<T> List<T> multiGet(Collection<String> keys, Class<T> clazz);
+
+	void sadd(String key, Object value);
+
+	void sadd(String key, Object[] values);
+
+	void sadd(String key, Object value, Long expireTime, TimeUnit unit);
+
+	void sadd(String key, Object[] values, Long expireTime, TimeUnit unit);
 
 	// list
-	long leftPush(Object key, Object value);
+	long rightPush(String key, Object value);
+
+	long rightPush(String key, Object value, Long expireTime, TimeUnit unit);
+
+	long rightPushAll(String key, Object[] values);
+
+	long rightPushAll(String key, Object[] values, Long expireTime, TimeUnit unit);
 	
-	long leftPush(Object key, Object value, Long expireTime, TimeUnit unit);
-	
+	long leftPush(String key, Object value);
+
+	long leftPush(String key, Object value, Long expireTime, TimeUnit unit);
+
+	long leftPushAll(String key, Object[] values);
+
+	long leftPushAll(String key, Object[] values, Long expireTime, TimeUnit unit);
 }
