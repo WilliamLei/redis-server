@@ -1,22 +1,15 @@
 
 package com.leipeng.redis.server.service.impl;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Formattable;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
-import org.junit.rules.ExpectedException;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -28,34 +21,16 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Resource(name = "objRedisTemplate")
 	private RedisTemplate<String, Object> redisTemplate;
-
-	@Resource(name = "valueSerializer")
-	private GenericJackson2JsonRedisSerializer valueSerializer;
-
-	@Resource(name = "stringSerializer")
-	private StringRedisSerializer keySerializer;
-
+	
 	// key - value
 	@Override
 	public void set(String key, Object value) {
-		set(key, value);
+		set(key, value, null, null);
 	}
 
 	@Override
 	public void set(String key, Object value, Long expireTime, TimeUnit unit) {
-		if (key == null || StringUtils.isEmpty(key.toString()) || value == null
-				|| StringUtils.isEmpty(value.toString())) {
-			return;
-		}
-
-		if (expireTime == null || expireTime.longValue() <= 0) {
-			redisTemplate.opsForValue().set(key, value);
-		} else {
-			if (unit == null) {
-				unit = TimeUnit.MILLISECONDS;
-			}
-			redisTemplate.opsForValue().set(key, value, expireTime, unit);
-		}
+		Redis.set(redisTemplate, key, value, expireTime, unit);
 	}
 
 	@Override
@@ -65,46 +40,17 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Override
 	public void multiSet(Map<String, Object> pairs, Long expireTime, TimeUnit unit) {
-		if (pairs == null || pairs.size() <= 0) {
-			return;
-		}
-		final Long finalExpireTime = Redis.convert(expireTime, unit);
-
-		if (finalExpireTime == null || finalExpireTime.longValue() <= 0) {
-			redisTemplate.opsForValue().multiSet(pairs);
-			return;
-		}
-
-		redisTemplate.executePipelined(new RedisCallback<Object>() {
-			@Override
-			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				for (Object key : pairs.keySet()) {
-					Object value = pairs.get(key);
-					if (key == null || StringUtils.isEmpty(key.toString()) || value == null
-							|| StringUtils.isEmpty(value)) {
-						continue;
-					}
-					connection.set(keySerializer.serialize(key.toString()), valueSerializer.serialize(value));
-					if (finalExpireTime != null && finalExpireTime.longValue() > 0) {
-						connection.expire(keySerializer.serialize(key.toString()), finalExpireTime);
-					}
-				}
-				return null;
-			}
-		});
+		Redis.multiSet(redisTemplate, pairs, expireTime, unit);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> T get(String key, Class<T> clazz) {
-		return (T) redisTemplate.opsForValue().get(key);
+		return Redis.get(redisTemplate, key, clazz);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> List<T> multiGet(Collection<String> keys, Class<T> clazz) {
-		List<T> ret = (List<T>) redisTemplate.opsForValue().multiGet(keys);
-		return ret;
+		return Redis.multiGet(redisTemplate, keys, clazz);
 	}
 
 	// set
@@ -115,23 +61,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Override
 	public void sadd(String key, Object value, Long expireTime, TimeUnit unit) {
-		if (key == null || StringUtils.isEmpty(key.toString()) || value == null
-				|| StringUtils.isEmpty(value.toString())) {
-			return;
-		}
-		final Long finalExpireTime = Redis.convert(expireTime, unit);
-		if (expireTime == null || expireTime.longValue() <= 0) {
-			redisTemplate.opsForSet().add(key, value);
-		} else {
-			redisTemplate.executePipelined(new RedisCallback<Object>() {
-				@Override
-				public Object doInRedis(RedisConnection connection) throws DataAccessException {
-					connection.sAdd(keySerializer.serialize(key.toString()), valueSerializer.serialize(value));
-					connection.expire(keySerializer.serialize(key.toString()), finalExpireTime);
-					return null;
-				}
-			});
-		}
+		Redis.sadd(redisTemplate, key, value, expireTime, unit);
 	}
 
 	@Override
@@ -141,25 +71,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Override
 	public void sadd(String key, Object[] values, Long expireTime, TimeUnit unit) {
-		if (key == null || StringUtils.isEmpty(key.toString()) || values == null || values.length <= 0) {
-			return;
-		}
-		final Long finalExpireTime = Redis.convert(expireTime, unit);
-
-		if (finalExpireTime == null || finalExpireTime.longValue() <= 0) {
-			redisTemplate.opsForSet().add(key, values);
-		} else {
-			redisTemplate.executePipelined(new RedisCallback<Object>() {
-				@Override
-				public Object doInRedis(RedisConnection connection) throws DataAccessException {
-					for (Object value : values) {
-						connection.sAdd(keySerializer.serialize(key.toString()), valueSerializer.serialize(value));
-					}
-					connection.expire(keySerializer.serialize(key.toString()), finalExpireTime);
-					return null;
-				}
-			});
-		}
+		Redis.saddAll(redisTemplate, key, values, expireTime, unit);
 	}
 
 	// List
@@ -170,31 +82,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Override
 	public long leftPush(String key, Object value, Long expireTime, TimeUnit unit) {
-		if (key == null || StringUtils.isEmpty(key) || value == null || StringUtils.isEmpty(value.toString())) {
-			return 0L;
-		}
-		if (unit == null) {
-			unit = TimeUnit.MILLISECONDS;
-		}
-
-		Long count = 0L;
-
-		Long finalExpireTime = Redis.convert(expireTime, unit);
-		if (finalExpireTime == null) {
-			count = redisTemplate.opsForList().leftPush(key, value);
-		} else {
-			RedisCallback<Long> action = new RedisCallback<Long>() {
-				@Override
-				public Long doInRedis(RedisConnection connection) throws DataAccessException {
-					Long result = connection.lPush(keySerializer.serialize(key), valueSerializer.serialize(value));
-					connection.expire(keySerializer.serialize(key), finalExpireTime);
-					return result;
-				}
-			};
-			count = Redis.execute(redisTemplate, action);
-		}
-
-		return count == null ? 0 : count.longValue();
+		return Redis.leftPush(redisTemplate, key, value, expireTime, unit);
 	}
 
 	@Override
@@ -204,37 +92,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Override
 	public long leftPushAll(String key, Object[] values, Long expireTime, TimeUnit unit) {
-		if (StringUtils.isEmpty(key) || values == null || values.length <= 0) {
-			return 0;
-		}
-
-		if (unit == null) {
-			unit = TimeUnit.MICROSECONDS;
-		}
-
-		Long count = 0L;
-
-		final Long finalExpireSeconds = Redis.convert(expireTime, unit);
-		if (finalExpireSeconds == null || finalExpireSeconds.longValue() <= 0) {
-			count = redisTemplate.opsForList().leftPushAll(key, values);
-		} else {
-			RedisCallback<Long> action = new RedisCallback<Long>() {
-				@Override
-				public Long doInRedis(RedisConnection connection) throws DataAccessException {
-					byte[][] valueBytes = new byte[values.length][];
-					int i = 0;
-					for (Object value : values) {
-						valueBytes[i++] = valueSerializer.serialize(value);
-					}
-					Long result = connection.lPush(keySerializer.serialize(key), valueBytes);
-					connection.expire(keySerializer.serialize(key), finalExpireSeconds);
-					return result;
-				}
-			};
-			count = Redis.execute(redisTemplate, action);
-		}
-
-		return count == null ? 0l : count.longValue();
+		return Redis.leftPushAll(redisTemplate, key, values, expireTime, unit);
 	}
 
 	public long rightPush(String key, Object value) {
@@ -243,31 +101,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Override
 	public long rightPush(String key, Object value, Long expireTime, TimeUnit unit) {
-		if (key == null || StringUtils.isEmpty(key) || value == null || StringUtils.isEmpty(value.toString())) {
-			return 0L;
-		}
-		if (unit == null) {
-			unit = TimeUnit.MILLISECONDS;
-		}
-
-		Long count = 0L;
-
-		Long finalExpireTime = Redis.convert(expireTime, unit);
-		if (finalExpireTime == null) {
-			count = redisTemplate.opsForList().rightPush(key, value);
-		} else {
-			RedisCallback<Long> action = new RedisCallback<Long>() {
-				@Override
-				public Long doInRedis(RedisConnection connection) throws DataAccessException {
-					Long result = connection.rPush(keySerializer.serialize(key), valueSerializer.serialize(value));
-					connection.expire(keySerializer.serialize(key), finalExpireTime);
-					return result;
-				}
-			};
-			count = Redis.execute(redisTemplate, action);
-		}
-
-		return count == null ? 0 : count.longValue();
+		return Redis.rightPush(redisTemplate, key, value, expireTime, unit);
 	}
 
 	@Override
@@ -277,142 +111,46 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Override
 	public long rightPushAll(String key, Object[] values, Long expireTime, TimeUnit unit) {
-		if (StringUtils.isEmpty(key) || values == null || values.length <= 0) {
-			return 0;
-		}
-
-		if (unit == null) {
-			unit = TimeUnit.MICROSECONDS;
-		}
-
-		Long count = 0L;
-
-		final Long finalExpireSeconds = Redis.convert(expireTime, unit);
-		if (finalExpireSeconds == null || finalExpireSeconds.longValue() <= 0) {
-			count = redisTemplate.opsForList().rightPushAll(key, values);
-		} else {
-			RedisCallback<Long> action = new RedisCallback<Long>() {
-				@Override
-				public Long doInRedis(RedisConnection connection) throws DataAccessException {
-					byte[][] valueBytes = new byte[values.length][];
-					int i = 0;
-					for (Object value : values) {
-						valueBytes[i++] = valueSerializer.serialize(value);
-					}
-					Long result = connection.rPush(keySerializer.serialize(key), valueBytes);
-					connection.expire(keySerializer.serialize(key), finalExpireSeconds);
-					return result;
-				}
-			};
-			count = Redis.execute(redisTemplate, action);
-		}
-
-		return count == null ? 0l : count.longValue();
+		return Redis.rightPushAll(redisTemplate, key, values, expireTime, unit);
 	}
 
 	@Override
 	public long llength(String key) {
-		if (StringUtils.isEmpty(key)) {
-			return 0L;
-		}
-		return redisTemplate.opsForList().size(key);
+		return Redis.llength(redisTemplate, key);
 	}
 
 	@Override
-	public <T> List<T> range(String key, Class<T> clazz) {		
+	public <T> List<T> range(String key, Class<T> clazz) {
 		return range(key, clazz, 1, llength(key));
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> List<T> range(String key, Class<T> clazz, long start, long end) {
-		if(StringUtils.isEmpty(key) || clazz == null || start < end) {
+		if (StringUtils.isEmpty(key) || clazz == null || start < end) {
 			return new ArrayList<T>();
 		}
 		return (List<T>) redisTemplate.opsForList().range(key, start, end);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> T leftPop(String key, Class<T> clazz) {
-		if(StringUtils.isEmpty(key)) {
-			return null;
-		}
-		
-		return (T) redisTemplate.opsForList().leftPop(key);
+		return Redis.leftPop(redisTemplate, key, clazz);
 	}
 
 	@Override
 	public <T> List<T> leftPop(String key, Class<T> clazz, int num) {
-		List<T> ret = new ArrayList<T>();
-		if(StringUtils.isEmpty(key) || num <= 0) {
-			return ret;
-		}
-		
-		if(num == 1) {
-			ret.add(leftPop(key, clazz));
-			return ret;
-		}
-		
-		RedisCallback<List<T>> action = new RedisCallback<List<T>>() {
-			@Override
-			public List<T> doInRedis(RedisConnection connection) throws DataAccessException {
-				List<T> ret = new ArrayList<T>();
-				byte[] keyBytes = keySerializer.serialize(key);
-				
-				for(int i = 0 ; i < num ; i++) {
-					byte[] value = connection.lPop(keyBytes);
-					if(value == null || value.length <= 0) {
-						break;
-					}
-					ret.add(valueSerializer.deserialize(value, clazz));
-				}
-				return ret;
-			}
-		};
-		
-		return Redis.execute(redisTemplate, action);
+		return Redis.leftPop(redisTemplate, key, clazz, num);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public <T> T rightPop(String key, Class<T> clazz) {
-		if(StringUtils.isEmpty(key)) {
-			return null;
-		}
-		return (T) redisTemplate.opsForList().rightPop(key);
+		return Redis.rightPop(redisTemplate, key, clazz);
 	}
 
 	@Override
 	public <T> List<T> rightPop(String key, Class<T> clazz, int num) {
-		List<T> ret = new ArrayList<T>();
-		if(StringUtils.isEmpty(key) || num <= 0) {
-			return ret;
-		}
-		
-		if(num == 1) {
-			ret.add(rightPop(key, clazz));
-			return ret;
-		}
-		
-		RedisCallback<List<T>> action = new RedisCallback<List<T>>() {
-			@Override
-			public List<T> doInRedis(RedisConnection connection) throws DataAccessException {
-				List<T> ret = new ArrayList<T>();
-				byte[] keyBytes = keySerializer.serialize(key);
-				
-				for(int i = 0 ; i < num ; i++) {
-					byte[] value = connection.rPop(keyBytes);
-					if(value == null || value.length <= 0) {
-						break;
-					}
-					ret.add(valueSerializer.deserialize(value, clazz));
-				}
-				return ret;
-			}
-		};
-		
-		return Redis.execute(redisTemplate, action);
+		return Redis.rightPop(redisTemplate, key, clazz, num);
 	}
 
 	// Zset
@@ -423,29 +161,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Override
 	public long zAdd(String key, Object value, double score, Long expireTime, TimeUnit unit) {
-		if(StringUtils.isEmpty(key)) {
-			return 0l;
-		}
-		
-		if(expireTime == null || expireTime.longValue() <= 0) {
-			return redisTemplate.opsForZSet().add(key, value, score) ? 1l : 0l;
-		}
-		
-		unit = unit == null ? TimeUnit.MILLISECONDS : unit;
-		
-		final Long expireSeconds = Redis.convert(expireTime, unit);
-		
-		RedisCallback<Long> action = new RedisCallback<Long>() {			
-			@Override
-			public Long doInRedis(RedisConnection connection) throws DataAccessException {				
-				byte[] keyBytes = keySerializer.serialize(key);
-				Long ret = connection.zAdd(keyBytes, score, valueSerializer.serialize(value)) ? 1L : 0L;
-				connection.expire(keyBytes, expireSeconds);
-				return ret;
-			}
-		};
-		
-		return Redis.execute(redisTemplate, action);
+		return Redis.zAdd(redisTemplate, key, value, score, expireTime, unit);
 	}
 
 	@Override
@@ -455,31 +171,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Override
 	public long zAddAll(String key, Map<Object, Double> tuples, Long expireTime, TimeUnit unit) {
-		if(StringUtils.isEmpty(key) || tuples == null || tuples.size() <= 0) {
-			return 0;
-		}
-		
-		final Long expireSeconds = Redis.convert(expireTime, unit);
-		
-		RedisCallback<Long> action = new RedisCallback<Long>() {
-
-			@Override
-			public Long doInRedis(RedisConnection connection) throws DataAccessException {
-				long ret = 0;
-				
-				byte[] keyBytes = keySerializer.serialize(key);
-				for(Entry<Object, Double> tuple : tuples.entrySet()) {
-					ret += (connection.zAdd(keyBytes, tuple.getValue().doubleValue(), valueSerializer.serialize(tuple.getKey())) ? 1 : 0);
-				}
-				
-				if(expireSeconds != null && expireSeconds.longValue() > 0) {
-					connection.expire(keyBytes, expireSeconds);
-				}
-				return ret;
-			}
-		};
-		
-		return Redis.execute(redisTemplate, action);
+		return Redis.zAddAll(redisTemplate, key, tuples, expireTime, unit);
 	}
-		
+
 }
