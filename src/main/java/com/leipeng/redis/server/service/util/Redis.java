@@ -517,6 +517,65 @@ public class Redis {
 		return execute(redisTemplate, action);
 	}
 
+	public static final <K, V, T> Set<TypedTuple<T>> zrangeByScoreWithScore(RedisTemplate<K, V> redisTemplate, K key,
+			double min, double max, Class<T> clazz, boolean reverse) {
+		if (StringUtils.isEmpty(key) || min > max) {
+			return new LinkedHashSet<TypedTuple<T>>();
+		}
+		
+		RedisCallback<Set<TypedTuple<T>>> action = new RedisCallback<Set<TypedTuple<T>>>() {
+			@Override
+			public Set<TypedTuple<T>> doInRedis(RedisConnection connection) throws DataAccessException {
+				Set<TypedTuple<T>> ret = new LinkedHashSet<ZSetOperations.TypedTuple<T>>();
+				Set<Tuple> tuples = null;
+				if (reverse) {
+					tuples = connection.zRevRangeByScoreWithScores(serializeKey(redisTemplate, key), min, max);
+				} else {
+					tuples = connection.zRangeByScoreWithScores(serializeKey(redisTemplate, key), min, max);
+				}
+
+				if (tuples != null && tuples.size() > 0) {
+					for (Tuple tuple : tuples) {
+						ret.add(new DefaultTypedTuple<T>(deserializeValue(redisTemplate, tuple.getValue(), clazz),
+								tuple.getScore()));
+					}
+				}
+				return ret;
+			}
+		};
+
+		return execute(redisTemplate, action);
+	}
+
+	public static final <K, V, T> Set<TypedTuple<T>> zrangeByScoreWithScore(RedisTemplate<K, V> redisTemplate, K key, double min, double max,
+			long offset, long limit, Class<T> clazz, boolean reverse) {
+		if (StringUtils.isEmpty(key) || min > max) {
+			return new LinkedHashSet<TypedTuple<T>>();
+		}
+		
+		RedisCallback<Set<TypedTuple<T>>> action = new RedisCallback<Set<TypedTuple<T>>>() {
+			@Override
+			public Set<TypedTuple<T>> doInRedis(RedisConnection connection) throws DataAccessException {
+				Set<TypedTuple<T>> ret = new LinkedHashSet<ZSetOperations.TypedTuple<T>>();
+				Set<Tuple> tuples = null;
+				if (reverse) {
+					tuples = connection.zRevRangeByScoreWithScores(serializeKey(redisTemplate, key), min, max, offset, limit);
+				} else {
+					tuples = connection.zRangeByScoreWithScores(serializeKey(redisTemplate, key), min, max, offset, limit);
+				}
+
+				if (tuples != null && tuples.size() > 0) {
+					for (Tuple tuple : tuples) {
+						ret.add(new DefaultTypedTuple<T>(deserializeValue(redisTemplate, tuple.getValue(), clazz),
+								tuple.getScore()));
+					}
+				}
+				return ret;
+			}
+		};
+
+		return execute(redisTemplate, action);
+	}
 	// Serializer
 	@SuppressWarnings("unchecked")
 	private static final <K, V> byte[] serializeKey(RedisTemplate<K, V> redisTemplate, Object key) {
