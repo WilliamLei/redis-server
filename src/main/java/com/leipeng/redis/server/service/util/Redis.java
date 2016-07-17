@@ -2,15 +2,21 @@ package com.leipeng.redis.server.service.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.connection.RedisZSetCommands.Tuple;
+import org.springframework.data.redis.core.DefaultTypedTuple;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.StringUtils;
 
@@ -158,9 +164,10 @@ public class Redis {
 			});
 		}
 	}
-	
+
 	// List
-	public static final <K, V> long leftPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime, TimeUnit unit) {
+	public static final <K, V> long leftPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime,
+			TimeUnit unit) {
 		if (key == null || StringUtils.isEmpty(key) || value == null || StringUtils.isEmpty(value.toString())) {
 			return 0L;
 		}
@@ -177,7 +184,8 @@ public class Redis {
 			RedisCallback<Long> action = new RedisCallback<Long>() {
 				@Override
 				public Long doInRedis(RedisConnection connection) throws DataAccessException {
-					Long result = connection.lPush(serializeKey(redisTemplate, key), serializeValue(redisTemplate, value));
+					Long result = connection.lPush(serializeKey(redisTemplate, key),
+							serializeValue(redisTemplate, value));
 					connection.expire(serializeKey(redisTemplate, key), finalExpireTime);
 					return result;
 				}
@@ -187,8 +195,9 @@ public class Redis {
 
 		return count == null ? 0 : count.longValue();
 	}
-	
-	public static final <K, V> long leftPushAll(RedisTemplate<K, V> redisTemplate, K key, V[] values, Long expireTime, TimeUnit unit) {
+
+	public static final <K, V> long leftPushAll(RedisTemplate<K, V> redisTemplate, K key, V[] values, Long expireTime,
+			TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || values == null || values.length <= 0) {
 			return 0;
 		}
@@ -222,7 +231,8 @@ public class Redis {
 		return count == null ? 0l : count.longValue();
 	}
 
-	public static final <K, V> long rightPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime, TimeUnit unit) {
+	public static final <K, V> long rightPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime,
+			TimeUnit unit) {
 		if (key == null || StringUtils.isEmpty(key) || value == null || StringUtils.isEmpty(value.toString())) {
 			return 0L;
 		}
@@ -239,7 +249,8 @@ public class Redis {
 			RedisCallback<Long> action = new RedisCallback<Long>() {
 				@Override
 				public Long doInRedis(RedisConnection connection) throws DataAccessException {
-					Long result = connection.rPush(serializeKey(redisTemplate, key), serializeValue(redisTemplate, value));
+					Long result = connection.rPush(serializeKey(redisTemplate, key),
+							serializeValue(redisTemplate, value));
 					connection.expire(serializeKey(redisTemplate, key), finalExpireTime);
 					return result;
 				}
@@ -251,7 +262,8 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V> long rightPushAll(RedisTemplate<K, V> redisTemplate, K key, V[] values, Long expireTime, TimeUnit unit) {
+	public static final <K, V> long rightPushAll(RedisTemplate<K, V> redisTemplate, K key, V[] values, Long expireTime,
+			TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || values == null || values.length <= 0) {
 			return 0;
 		}
@@ -284,22 +296,23 @@ public class Redis {
 
 		return count == null ? 0l : count.longValue();
 	}
-	
+
 	public static final <K, V> long llength(RedisTemplate<K, V> redisTemplate, K key) {
 		if (StringUtils.isEmpty(key)) {
 			return 0L;
 		}
 		return redisTemplate.opsForList().size(key);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static final <K,V, T> List<T> range(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz, long start, long end) {
+	public static final <K, V, T> List<T> range(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz, long start,
+			long end) {
 		if (StringUtils.isEmpty(key) || clazz == null || start < end) {
 			return new ArrayList<T>();
 		}
 		return (List<T>) redisTemplate.opsForList().range(key, start, end);
 	}
-	
+
 	public static final <K, V, T> T leftPop(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz) {
 		if (StringUtils.isEmpty(key)) {
 			return null;
@@ -338,7 +351,7 @@ public class Redis {
 
 		return Redis.execute(redisTemplate, action);
 	}
-	
+
 	public static final <K, V, T> T rightPop(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz) {
 		if (StringUtils.isEmpty(key)) {
 			return null;
@@ -378,8 +391,9 @@ public class Redis {
 		return Redis.execute(redisTemplate, action);
 	}
 
-	// Zset	
-	public static final <K, V> long zAdd(RedisTemplate<K, V> redisTemplate, K key, V value, double score, Long expireTime, TimeUnit unit) {
+	// Zset
+	public static final <K, V> long zAdd(RedisTemplate<K, V> redisTemplate, K key, V value, double score,
+			Long expireTime, TimeUnit unit) {
 		if (StringUtils.isEmpty(key)) {
 			return 0l;
 		}
@@ -404,8 +418,9 @@ public class Redis {
 
 		return Redis.execute(redisTemplate, action);
 	}
-	
-	public static final <K, V> long zAddAll(RedisTemplate<K, V> redisTemplate, K key, Map<V, Double> tuples, Long expireTime, TimeUnit unit) {
+
+	public static final <K, V> long zAddAll(RedisTemplate<K, V> redisTemplate, K key, Map<V, Double> tuples,
+			Long expireTime, TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || tuples == null || tuples.size() <= 0) {
 			return 0;
 		}
@@ -433,8 +448,76 @@ public class Redis {
 
 		return Redis.execute(redisTemplate, action);
 	}
-	
-	//Serializer
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T> Set<T> zrange(RedisTemplate<K, V> redisTemplate, K key, long start, long end,
+			Class<T> clazz, boolean reverse) {
+		if (key == null || StringUtils.isEmpty(key) || start < end) {
+			return new LinkedHashSet<T>();
+		}
+		if (reverse) {
+			return (Set<T>) redisTemplate.opsForZSet().reverseRange(key, start, end);
+		}
+		return (Set<T>) redisTemplate.opsForZSet().range(key, start, end);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T> Set<T> zrangeByScore(RedisTemplate<K, V> redisTemplate, K key, double min, double max,
+			Class<T> clazz, boolean reverse) {
+		if (key == null || StringUtils.isEmpty(key) || min > max) {
+			return new LinkedHashSet<T>();
+		}
+
+		if (reverse) {
+			return (Set<T>) redisTemplate.opsForZSet().reverseRangeByScore(key, min, max);
+		}
+		return (Set<T>) redisTemplate.opsForZSet().rangeByScore(key, min, max);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T> Set<T> zrangeByScore(RedisTemplate<K, V> redisTemplate, K key, double min, double max,
+			long offset, long limit, Class<T> clazz, boolean reverse) {
+		if (StringUtils.isEmpty(key) || min > max) {
+			return new LinkedHashSet<T>();
+		}
+		if (offset <= 0) {
+			offset = 1;
+		}
+		if (reverse) {
+			return (Set<T>) redisTemplate.opsForZSet().reverseRangeByScore(key, min, max, offset, limit);
+		}
+		return (Set<T>) redisTemplate.opsForZSet().rangeByScore(key, min, max, offset, limit);
+	}
+
+	public static final <K, V, T> Set<TypedTuple<T>> zrangeWithScore(RedisTemplate<K, V> redisTemplate, K key,
+			long start, long end, Class<T> clazz, boolean reverse) {
+		if (key == null || StringUtils.isEmpty(key) || start < end) {
+			return new LinkedHashSet<TypedTuple<T>>();
+		}
+		RedisCallback<Set<TypedTuple<T>>> action = new RedisCallback<Set<TypedTuple<T>>>() {
+			@Override
+			public Set<TypedTuple<T>> doInRedis(RedisConnection connection) throws DataAccessException {
+				Set<TypedTuple<T>> ret = new LinkedHashSet<ZSetOperations.TypedTuple<T>>();
+				Set<Tuple> tuples = null;
+				if (reverse) {
+					tuples = connection.zRevRangeWithScores(serializeKey(redisTemplate, key), start, end);
+				} else {
+					tuples = connection.zRangeWithScores(serializeKey(redisTemplate, key), start, end);
+				}
+
+				if (tuples != null && tuples.size() > 0) {
+					for (Tuple tuple : tuples) {
+						ret.add(new DefaultTypedTuple<T>(deserializeValue(redisTemplate, tuple.getValue(), clazz),
+								tuple.getScore()));
+					}
+				}
+				return ret;
+			}
+		};
+		return execute(redisTemplate, action);
+	}
+
+	// Serializer
 	@SuppressWarnings("unchecked")
 	private static final <K, V> byte[] serializeKey(RedisTemplate<K, V> redisTemplate, Object key) {
 		RedisSerializer serializer = redisTemplate.getKeySerializer();
@@ -446,7 +529,7 @@ public class Redis {
 		RedisSerializer serializer = redisTemplate.getValueSerializer();
 		return serializer.serialize(value);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private static final <K, V, T> T deserializeValue(RedisTemplate<K, V> redisTemplate, byte[] value, Class<T> clazz) {
 		RedisSerializer serializer = redisTemplate.getValueSerializer();
