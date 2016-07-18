@@ -280,8 +280,8 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> List<T> randomDistinctMembers(RedisTemplate<K, V> redisTemplate, K key, int count,
-			Class<T> clazz) {
+	public static final <K, V, T extends V> List<T> randomDistinctMembers(RedisTemplate<K, V> redisTemplate, K key,
+			int count, Class<T> clazz) {
 		if (StringUtils.isEmpty(key) || count <= 0) {
 			return null;
 		}
@@ -294,7 +294,32 @@ public class Redis {
 
 		return (List<T>) redisTemplate.opsForSet().distinctRandomMembers(key, count);
 	}
-	
+
+	public static final <K, V, T extends V> List<T> randomPopMembers(RedisTemplate<K, V> redisTemplate, K key,
+			int count, Class<T> clazz) {
+		if (StringUtils.isEmpty(key) || count <= 0) {
+			return null;
+		}
+		List<T> ret = new ArrayList<T>();
+		RedisCallback<List<T>> action = new RedisCallback<List<T>>() {
+			@Override
+			public List<T> doInRedis(RedisConnection connection) throws DataAccessException {
+				List<T> ret = new ArrayList<T>();
+				byte[] keyBytes = serializeKey(redisTemplate, key);
+				for (int i = 0; i < count; i++) {
+					byte[] value = connection.sPop(keyBytes);
+					if (value == null || value.length <= 0) {
+						break;
+					}
+					ret.add(deserializeValue(redisTemplate, value, clazz));
+				}
+				return ret;
+			}
+		};
+		ret = execute(redisTemplate, action);
+		return ret;
+	}
+
 	// List
 	public static final <K, V> long leftPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime,
 			TimeUnit unit) {
