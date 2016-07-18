@@ -183,6 +183,30 @@ public class Redis {
 		return (Set<T>) redisTemplate.opsForSet().difference(key, otherKeys);
 	}
 
+	public static final <K, V, T extends V> long sDiffAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+			K storeKey) {
+
+		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2) || StringUtils.isEmpty(storeKey)) {
+			return 0;
+		}
+
+		Long ret = redisTemplate.opsForSet().differenceAndStore(key1, key2, storeKey);
+
+		return ret == null ? 0 : ret.longValue();
+	}
+
+	public static final <K, V, T extends V> long sDiffAndStore(RedisTemplate<K, V> redisTemplate, K key1,
+			Collection<K> otherKeys, K storeKey) {
+
+		if (StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0 || StringUtils.isEmpty(storeKey)) {
+			return 0;
+		}
+
+		Long ret = redisTemplate.opsForSet().differenceAndStore(key1, otherKeys, storeKey);
+
+		return ret == null ? 0 : ret.longValue();
+	}
+
 	@SuppressWarnings("unchecked")
 	public static final <K, V, T extends V> Set<T> sInter(RedisTemplate<K, V> redisTemplate, K key1, K key2,
 			Class<T> clazz) {
@@ -201,27 +225,76 @@ public class Redis {
 
 		return (Set<T>) redisTemplate.opsForSet().intersect(key1, otherKeys);
 	}
-	
-	public static final <K, V, T extends V> long sInterAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2, K storeKey) {
-		if(StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2) || StringUtils.isEmpty(storeKey)) {
+
+	public static final <K, V, T extends V> long sInterAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+			K storeKey) {
+		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2) || StringUtils.isEmpty(storeKey)) {
 			return 0;
 		}
-		
+
 		Long ret = redisTemplate.opsForSet().intersectAndStore(key1, key2, storeKey);
-		
-		return ret == null ? 0 : ret.longValue();
-	}
-	
-	public static final <K, V, T extends V> long sInterAndStore(RedisTemplate<K, V> redisTemplate, K key1, Collection<K> otherKeys, K storeKey) {
-		if(StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0 || StringUtils.isEmpty(storeKey)) {
-			return 0;
-		}
-		
-		Long ret = redisTemplate.opsForSet().intersectAndStore(key1, otherKeys, storeKey);
-		
+
 		return ret == null ? 0 : ret.longValue();
 	}
 
+	public static final <K, V, T extends V> long sInterAndStore(RedisTemplate<K, V> redisTemplate, K key1,
+			Collection<K> otherKeys, K storeKey) {
+		if (StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0 || StringUtils.isEmpty(storeKey)) {
+			return 0;
+		}
+
+		Long ret = redisTemplate.opsForSet().intersectAndStore(key1, otherKeys, storeKey);
+
+		return ret == null ? 0 : ret.longValue();
+	}
+
+	public static final <K, V> boolean isMember(RedisTemplate<K, V> redisTemplate, K key, V value) {
+		if (StringUtils.isEmpty(key) || value == null) {
+			return false;
+		}
+		return redisTemplate.opsForSet().isMember(key, value);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T extends V> Set<T> members(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz) {
+		if (StringUtils.isEmpty(key)) {
+			return null;
+		}
+		return (Set<T>) redisTemplate.opsForSet().members(key);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T extends V> List<T> randomMembers(RedisTemplate<K, V> redisTemplate, K key, int count,
+			Class<T> clazz) {
+		if (StringUtils.isEmpty(key) || count <= 0) {
+			return null;
+		}
+
+		if (count == 1) {
+			List<T> ret = new ArrayList<T>();
+			ret.add((T) redisTemplate.opsForSet().randomMember(key));
+			return ret;
+		}
+
+		return (List<T>) redisTemplate.opsForSet().randomMembers(key, count);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T extends V> List<T> randomDistinctMembers(RedisTemplate<K, V> redisTemplate, K key, int count,
+			Class<T> clazz) {
+		if (StringUtils.isEmpty(key) || count <= 0) {
+			return null;
+		}
+
+		if (count == 1) {
+			List<T> ret = new ArrayList<T>();
+			ret.add((T) redisTemplate.opsForSet().randomMember(key));
+			return ret;
+		}
+
+		return (List<T>) redisTemplate.opsForSet().distinctRandomMembers(key, count);
+	}
+	
 	// List
 	public static final <K, V> long leftPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime,
 			TimeUnit unit) {
