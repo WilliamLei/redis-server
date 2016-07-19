@@ -169,7 +169,7 @@ public class Redis {
 	public static final <K, V, T extends V> Set<T> sDiff(RedisTemplate<K, V> redisTemplate, K key1, K key2,
 			Class<T> clazz) {
 		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2)) {
-			return null;1
+			return null;
 		}
 		return (Set<T>) redisTemplate.opsForSet().difference(key1, key2);
 	}
