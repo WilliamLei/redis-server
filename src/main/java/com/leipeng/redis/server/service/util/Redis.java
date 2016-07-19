@@ -320,6 +320,46 @@ public class Redis {
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T extends V> Set<T> union(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+			Class<T> clazz) {
+		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2)) {
+			return null;
+		}
+
+		return (Set<T>) redisTemplate.opsForSet().union(key1, key2);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T extends V> Set<T> union(RedisTemplate<K, V> redisTemplate, K key1,
+			Collection<K> otherKeys, Class<T> clazz) {
+		if (StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0) {
+			return null;
+		}
+
+		return (Set<T>) redisTemplate.opsForSet().union(key1, otherKeys);
+	}
+
+	public static final <K, V, T extends V> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2, K storeKey) {
+		if(StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2) || StringUtils.isEmpty(storeKey)) {
+			return 0;
+		}
+		
+		Long ret = redisTemplate.opsForSet().unionAndStore(key1, key2, storeKey);
+		
+		return ret == null ? 0 : ret.longValue();
+	}
+	
+	public static final <K, V, T extends V> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1, Collection<K> otherKeys, K storeKey) {
+		if(StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0 || StringUtils.isEmpty(storeKey)) {
+			return 0;
+		}
+		
+		Long ret = redisTemplate.opsForSet().unionAndStore(key1, otherKeys, storeKey);
+		
+		return ret == null ? 0 : ret.longValue();
+	}
+	
 	// List
 	public static final <K, V> long leftPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime,
 			TimeUnit unit) {
