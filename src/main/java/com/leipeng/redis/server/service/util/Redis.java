@@ -340,26 +340,49 @@ public class Redis {
 		return (Set<T>) redisTemplate.opsForSet().union(key1, otherKeys);
 	}
 
-	public static final <K, V, T extends V> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2, K storeKey) {
-		if(StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2) || StringUtils.isEmpty(storeKey)) {
+	public static final <K, V, T extends V> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+			K storeKey) {
+		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2) || StringUtils.isEmpty(storeKey)) {
 			return 0;
 		}
-		
+
 		Long ret = redisTemplate.opsForSet().unionAndStore(key1, key2, storeKey);
-		
+
 		return ret == null ? 0 : ret.longValue();
 	}
-	
-	public static final <K, V, T extends V> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1, Collection<K> otherKeys, K storeKey) {
-		if(StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0 || StringUtils.isEmpty(storeKey)) {
+
+	public static final <K, V, T extends V> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1,
+			Collection<K> otherKeys, K storeKey) {
+		if (StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0 || StringUtils.isEmpty(storeKey)) {
 			return 0;
 		}
-		
+
 		Long ret = redisTemplate.opsForSet().unionAndStore(key1, otherKeys, storeKey);
-		
+
 		return ret == null ? 0 : ret.longValue();
 	}
-	
+
+	public static final <K, V> long sRemove(RedisTemplate<K, V> redisTemplate, K key, V[] values) {
+		if (StringUtils.isEmpty(key) || values == null || values.length <= 0) {
+			return 0;
+		}
+
+		Long count = redisTemplate.opsForSet().remove(key, values);
+
+		return count == null ? 0 : count.longValue();
+
+	}
+
+	public static final <K, V> long sCard(RedisTemplate<K, V> redisTemplate, K key) {
+		if (StringUtils.isEmpty(key)) {
+			return 0;
+		}
+
+		Long size = redisTemplate.opsForSet().size(key);
+
+		return size == null ? 0 : size.longValue();
+	}
+
 	// List
 	public static final <K, V> long leftPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime,
 			TimeUnit unit) {
