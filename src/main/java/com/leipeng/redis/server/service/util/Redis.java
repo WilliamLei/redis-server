@@ -21,6 +21,8 @@ import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+
 public class Redis {
 
 	public static <K, V, T> T execute(RedisTemplate<K, V> redisTemplate, RedisCallback<T> action) {
@@ -899,12 +901,81 @@ public class Redis {
 				return (long) tuples.size();
 			}
 		};
-		
+
 		ret = execute(redisTemplate, action);
 		return ret == null ? 0 : ret.longValue();
 	}
 
-	
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T> T hGet(RedisTemplate<K, V> redisTemplate, K key, Object hashKey, Class<T> clazz) {
+		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(hashKey)) {
+			return null;
+		}
+		return (T) redisTemplate.opsForHash().get(key, hashKey);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T> Map<Object, T> hGetAll(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz) {
+		if (StringUtils.isEmpty(key)) {
+			return null;
+		}
+
+		return (Map<Object, T>) redisTemplate.opsForHash().entries(key);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T> List<T> hMultiGet(RedisTemplate<K, V> redisTemplate, K key,
+			Collection<Object> hashKeys, Class<T> clazz) {
+		if (StringUtils.isEmpty(key) || hashKeys == null || hashKeys.size() <= 0) {
+			return null;
+		}
+
+		List<T> result = (List<T>) redisTemplate.opsForHash().multiGet(key, hashKeys);
+		result.removeAll(null);
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T> Set<T> hKeys(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz) {
+		if (StringUtils.isEmpty(key)) {
+			return null;
+		}
+
+		return (Set<T>) redisTemplate.opsForHash().keys(key);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <K, V, T> Set<T> hValues(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz) {
+		if (StringUtils.isEmpty(key)) {
+			return null;
+		}
+		
+		return (Set<T>) redisTemplate.opsForHash().values(key); 
+	}
+
+	public static final <K, V> boolean hContainKey(RedisTemplate<K, V> redisTemplate, K key, Object hashKey) {
+		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(hashKey)) {
+			return false;
+		}
+		return redisTemplate.opsForHash().hasKey(key, hashKey);
+	}
+
+	public static final <K, V> int hDel(RedisTemplate<K, V> redisTemplate, K key, Object[] hashKeys) {
+		if (StringUtils.isEmpty(key) || hashKeys == null || hashKeys.length <= 0) {
+			return 0;
+		}
+		redisTemplate.opsForHash().delete(key, hashKeys);
+		return hashKeys.length;
+	}
+
+	public static final <K, V> long hLen(RedisTemplate<K, V> redisTemplate, K key) {
+		if(StringUtils.isEmpty(key)) {
+			return 0;
+		}
+		
+		Long ret = redisTemplate.opsForHash().size(key);
+		return ret == null ? 0 : ret.longValue();
+	}
 	
 	// Serializer
 	@SuppressWarnings("unchecked")
