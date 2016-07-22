@@ -83,8 +83,13 @@ public class Redis {
 		if (pairs == null || pairs.size() <= 0) {
 			return;
 		}
+		
+		if(unit == null) {
+			unit = TimeUnit.MILLISECONDS;
+		}
+		
 		final Long finalExpireTime = Redis.convert(expireTime, unit);
-
+		
 		if (finalExpireTime == null || finalExpireTime.longValue() <= 0) {
 			redisTemplate.opsForValue().multiSet(pairs);
 			return;
