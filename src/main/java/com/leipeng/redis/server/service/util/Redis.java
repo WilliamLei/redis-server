@@ -2,6 +2,7 @@ package com.leipeng.redis.server.service.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -840,22 +841,104 @@ public class Redis {
 		return ret == null ? 0 : ret.longValue();
 	}
 
+	// Map
+	public static final <K, V> long put(RedisTemplate<K, V> redisTemplate, K key, Object hashKey, V value, Long timeout,
+			TimeUnit unit) {
+		if (StringUtils.isEmpty(key) || value == null) {
+			return 0;
+		}
+
+		if (unit == null) {
+			unit = TimeUnit.MILLISECONDS;
+		}
+
+		Long finalTimeOut = convert(timeout, unit);
+
+		Long ret = 1L;
+
+		if (finalTimeOut == null || finalTimeOut.longValue() <= 0) {
+			redisTemplate.opsForHash().put(key, hashKey, value);
+		} else {
+			RedisCallback<Long> action = new RedisCallback<Long>() {
+				@Override
+				public Long doInRedis(RedisConnection connection) throws DataAccessException {
+					byte[] rawKey = serializeKey(redisTemplate, key);
+					long ret = connection.hSet(rawKey, serializeHashKey(redisTemplate, hashKey),
+							serializeValue(redisTemplate, value)) ? 1 : 0;
+					connection.expire(rawKey, finalTimeOut);
+					return ret;
+				}
+			};
+			ret = execute(redisTemplate, action);
+		}
+
+		return ret;
+	}
+
+	public static final <K, V> long putAll(RedisTemplate<K, V> redisTemplate, K key, Map<K, V> tuples, Long timeout,
+			TimeUnit unit) {
+		if (StringUtils.isEmpty(key) || tuples == null || tuples.size() <= 0) {
+			return 0;
+		}
+		unit = unit == null ? TimeUnit.MILLISECONDS : unit;
+		Long finalTimeout = convert(timeout, unit);
+		Long ret = 0L;
+
+		RedisCallback<Long> action = new RedisCallback<Long>() {
+			@Override
+			public Long doInRedis(RedisConnection connection) throws DataAccessException {
+				Map<byte[], byte[]> values = new LinkedHashMap<byte[], byte[]>();
+				for (Map.Entry<K, V> tuple : tuples.entrySet()) {
+					values.put(serializeHashKey(redisTemplate, tuple.getKey()),
+							serializeHashValue(redisTemplate, tuple.getValue()));
+				}
+				connection.hMSet(serializeKey(redisTemplate, key), values);
+				if (finalTimeout != null && finalTimeout.longValue() > 0) {
+					connection.expire(serializeKey(redisTemplate, key), finalTimeout);
+				}
+				return (long) tuples.size();
+			}
+		};
+		
+		ret = execute(redisTemplate, action);
+		return ret == null ? 0 : ret.longValue();
+	}
+
+	
+	
 	// Serializer
 	@SuppressWarnings("unchecked")
 	private static final <K, V> byte[] serializeKey(RedisTemplate<K, V> redisTemplate, Object key) {
 		RedisSerializer serializer = redisTemplate.getKeySerializer();
+		serializer = serializer == null ? redisTemplate.getStringSerializer() : serializer;
 		return serializer.serialize(key);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static final <K, V> byte[] serializeValue(RedisTemplate<K, V> redisTemplate, Object value) {
 		RedisSerializer serializer = redisTemplate.getValueSerializer();
+		serializer = serializer == null ? redisTemplate.getDefaultSerializer() : serializer;
 		return serializer.serialize(value);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static final <K, V, T> T deserializeValue(RedisTemplate<K, V> redisTemplate, byte[] value, Class<T> clazz) {
 		RedisSerializer serializer = redisTemplate.getValueSerializer();
+		serializer = serializer == null ? redisTemplate.getDefaultSerializer() : serializer;
 		return (T) serializer.deserialize(value);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static final <K, V> byte[] serializeHashKey(RedisTemplate<K, V> redisTemplate, Object hashKey) {
+		RedisSerializer serializer = redisTemplate.getHashKeySerializer();
+		serializer = serializer == null ? redisTemplate.getDefaultSerializer() : serializer;
+		return serializer.serialize(hashKey);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static final <K, V> byte[] serializeHashValue(RedisTemplate<K, V> redisTemplate, Object hashValue) {
+		RedisSerializer serializer = redisTemplate.getHashValueSerializer();
+		serializer = serializer == null ? redisTemplate.getDefaultSerializer() : serializer;
+		return serializer.serialize(hashValue);
 	}
 }
