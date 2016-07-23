@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
 import com.leipeng.redis.server.service.RedisServerService;
 import com.leipeng.redis.server.service.util.Redis;
 
@@ -21,6 +22,7 @@ public class RedisServerServiceImpl implements RedisServerService {
 
 	@Resource(name = "objRedisTemplate")
 	private RedisTemplate<String, Object> redisTemplate;
+	
 	
 	// key - value
 	@Override

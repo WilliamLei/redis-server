@@ -21,8 +21,6 @@ import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.util.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-
 public class Redis {
 
 	public static <K, V, T> T execute(RedisTemplate<K, V> redisTemplate, RedisCallback<T> action) {
@@ -78,18 +76,18 @@ public class Redis {
 		}
 	}
 
-	public static final <K, V> void multiSet(RedisTemplate<K, V> redisTemplate, Map<? extends K, ? extends V> pairs,
-			Long expireTime, TimeUnit unit) {
+	public static final <K, V> void multiSet(final RedisTemplate<K, V> redisTemplate,
+			final Map<? extends K, ? extends V> pairs, Long expireTime, TimeUnit unit) {
 		if (pairs == null || pairs.size() <= 0) {
 			return;
 		}
-		
-		if(unit == null) {
+
+		if (unit == null) {
 			unit = TimeUnit.MILLISECONDS;
 		}
-		
+
 		final Long finalExpireTime = Redis.convert(expireTime, unit);
-		
+
 		if (finalExpireTime == null || finalExpireTime.longValue() <= 0) {
 			redisTemplate.opsForValue().multiSet(pairs);
 			return;
@@ -127,7 +125,8 @@ public class Redis {
 
 	// Set
 	@SuppressWarnings("unchecked")
-	public static <K, V> void sadd(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime, TimeUnit unit) {
+	public static <K, V> void sadd(final RedisTemplate<K, V> redisTemplate, final K key, final V value, Long expireTime,
+			TimeUnit unit) {
 		if (key == null || StringUtils.isEmpty(key.toString()) || value == null
 				|| StringUtils.isEmpty(value.toString())) {
 			return;
@@ -147,8 +146,8 @@ public class Redis {
 		}
 	}
 
-	public static <K, V> void saddAll(RedisTemplate<K, V> redisTemplate, K key, V[] values, Long expireTime,
-			TimeUnit unit) {
+	public static <K, V> void saddAll(final RedisTemplate<K, V> redisTemplate, final K key, final V[] values,
+			Long expireTime, TimeUnit unit) {
 		if (key == null || StringUtils.isEmpty(key.toString()) || values == null || values.length <= 0) {
 			return;
 		}
@@ -303,8 +302,8 @@ public class Redis {
 		return (List<T>) redisTemplate.opsForSet().distinctRandomMembers(key, count);
 	}
 
-	public static final <K, V, T extends V> List<T> randomPopMembers(RedisTemplate<K, V> redisTemplate, K key,
-			int count, Class<T> clazz) {
+	public static final <K, V, T extends V> List<T> randomPopMembers(final RedisTemplate<K, V> redisTemplate,
+			final K key, final int count, final Class<T> clazz) {
 		if (StringUtils.isEmpty(key) || count <= 0) {
 			return null;
 		}
@@ -392,8 +391,8 @@ public class Redis {
 	}
 
 	// List
-	public static final <K, V> long leftPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime,
-			TimeUnit unit) {
+	public static final <K, V> long leftPush(final RedisTemplate<K, V> redisTemplate, final K key, final V value,
+			Long expireTime, TimeUnit unit) {
 		if (key == null || StringUtils.isEmpty(key) || value == null || StringUtils.isEmpty(value.toString())) {
 			return 0L;
 		}
@@ -403,7 +402,7 @@ public class Redis {
 
 		Long count = 0L;
 
-		Long finalExpireTime = Redis.convert(expireTime, unit);
+		final Long finalExpireTime = Redis.convert(expireTime, unit);
 		if (finalExpireTime == null) {
 			count = redisTemplate.opsForList().leftPush(key, value);
 		} else {
@@ -422,8 +421,8 @@ public class Redis {
 		return count == null ? 0 : count.longValue();
 	}
 
-	public static final <K, V> long leftPushAll(RedisTemplate<K, V> redisTemplate, K key, V[] values, Long expireTime,
-			TimeUnit unit) {
+	public static final <K, V> long leftPushAll(final RedisTemplate<K, V> redisTemplate, final K key, final V[] values,
+			Long expireTime, TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || values == null || values.length <= 0) {
 			return 0;
 		}
@@ -457,8 +456,8 @@ public class Redis {
 		return count == null ? 0l : count.longValue();
 	}
 
-	public static final <K, V> long rightPush(RedisTemplate<K, V> redisTemplate, K key, V value, Long expireTime,
-			TimeUnit unit) {
+	public static final <K, V> long rightPush(final RedisTemplate<K, V> redisTemplate, final K key, final V value,
+			Long expireTime, TimeUnit unit) {
 		if (key == null || StringUtils.isEmpty(key) || value == null || StringUtils.isEmpty(value.toString())) {
 			return 0L;
 		}
@@ -468,7 +467,7 @@ public class Redis {
 
 		Long count = 0L;
 
-		Long finalExpireTime = Redis.convert(expireTime, unit);
+		final Long finalExpireTime = Redis.convert(expireTime, unit);
 		if (finalExpireTime == null) {
 			count = redisTemplate.opsForList().rightPush(key, value);
 		} else {
@@ -487,8 +486,8 @@ public class Redis {
 		return count == null ? 0 : count.longValue();
 	}
 
-	public static final <K, V> long rightPushAll(RedisTemplate<K, V> redisTemplate, K key, V[] values, Long expireTime,
-			TimeUnit unit) {
+	public static final <K, V> long rightPushAll(final RedisTemplate<K, V> redisTemplate, final K key, final V[] values,
+			Long expireTime, TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || values == null || values.length <= 0) {
 			return 0;
 		}
@@ -547,7 +546,8 @@ public class Redis {
 		return (T) redisTemplate.opsForList().leftPop(key);
 	}
 
-	public static final <K, V, T> List<T> leftPop(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz, int num) {
+	public static final <K, V, T> List<T> leftPop(final RedisTemplate<K, V> redisTemplate, final K key,
+			final Class<T> clazz, final int num) {
 		List<T> ret = new ArrayList<T>();
 		if (StringUtils.isEmpty(key) || num <= 0) {
 			return ret;
@@ -587,7 +587,8 @@ public class Redis {
 		return (T) redisTemplate.opsForList().rightPop(key);
 	}
 
-	public static final <K, V, T> List<T> rightPop(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz, int num) {
+	public static final <K, V, T> List<T> rightPop(final RedisTemplate<K, V> redisTemplate, final K key,
+			final Class<T> clazz, final int num) {
 		List<T> ret = new ArrayList<T>();
 		if (StringUtils.isEmpty(key) || num <= 0) {
 			return ret;
@@ -636,8 +637,8 @@ public class Redis {
 	}
 
 	// Zset
-	public static final <K, V> long zAdd(RedisTemplate<K, V> redisTemplate, K key, V value, double score,
-			Long expireTime, TimeUnit unit) {
+	public static final <K, V> long zAdd(final RedisTemplate<K, V> redisTemplate, final K key, final V value,
+			final double score, Long expireTime, TimeUnit unit) {
 		if (StringUtils.isEmpty(key)) {
 			return 0l;
 		}
@@ -663,8 +664,8 @@ public class Redis {
 		return Redis.execute(redisTemplate, action);
 	}
 
-	public static final <K, V> long zAddAll(RedisTemplate<K, V> redisTemplate, K key, Map<V, Double> tuples,
-			Long expireTime, TimeUnit unit) {
+	public static final <K, V> long zAddAll(final RedisTemplate<K, V> redisTemplate, final K key,
+			final Map<V, Double> tuples, Long expireTime, TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || tuples == null || tuples.size() <= 0) {
 			return 0;
 		}
@@ -733,8 +734,8 @@ public class Redis {
 		return (Set<T>) redisTemplate.opsForZSet().rangeByScore(key, min, max, offset, limit);
 	}
 
-	public static final <K, V, T> Set<TypedTuple<T>> zrangeWithScore(RedisTemplate<K, V> redisTemplate, K key,
-			long start, long end, Class<T> clazz, boolean reverse) {
+	public static final <K, V, T> Set<TypedTuple<T>> zrangeWithScore(final RedisTemplate<K, V> redisTemplate,
+			final K key, final long start, final long end, final Class<T> clazz, final boolean reverse) {
 		if (key == null || StringUtils.isEmpty(key) || start < end) {
 			return new LinkedHashSet<TypedTuple<T>>();
 		}
@@ -761,8 +762,8 @@ public class Redis {
 		return execute(redisTemplate, action);
 	}
 
-	public static final <K, V, T> Set<TypedTuple<T>> zrangeByScoreWithScore(RedisTemplate<K, V> redisTemplate, K key,
-			double min, double max, Class<T> clazz, boolean reverse) {
+	public static final <K, V, T> Set<TypedTuple<T>> zrangeByScoreWithScore(final RedisTemplate<K, V> redisTemplate,
+			final K key, final double min, final double max, final Class<T> clazz, final boolean reverse) {
 		if (StringUtils.isEmpty(key) || min > max) {
 			return new LinkedHashSet<TypedTuple<T>>();
 		}
@@ -791,8 +792,9 @@ public class Redis {
 		return execute(redisTemplate, action);
 	}
 
-	public static final <K, V, T> Set<TypedTuple<T>> zrangeByScoreWithScore(RedisTemplate<K, V> redisTemplate, K key,
-			double min, double max, long offset, long limit, Class<T> clazz, boolean reverse) {
+	public static final <K, V, T> Set<TypedTuple<T>> zrangeByScoreWithScore(final RedisTemplate<K, V> redisTemplate,
+			final K key, final double min, final double max, final long offset, final long limit, final Class<T> clazz,
+			final boolean reverse) {
 		if (StringUtils.isEmpty(key) || min > max) {
 			return new LinkedHashSet<TypedTuple<T>>();
 		}
@@ -849,8 +851,8 @@ public class Redis {
 	}
 
 	// Map
-	public static final <K, V> long put(RedisTemplate<K, V> redisTemplate, K key, Object hashKey, V value, Long timeout,
-			TimeUnit unit) {
+	public static final <K, V> long put(final RedisTemplate<K, V> redisTemplate, final K key, final Object hashKey,
+			final V value, Long timeout, TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || value == null) {
 			return 0;
 		}
@@ -859,7 +861,7 @@ public class Redis {
 			unit = TimeUnit.MILLISECONDS;
 		}
 
-		Long finalTimeOut = convert(timeout, unit);
+		final Long finalTimeOut = convert(timeout, unit);
 
 		Long ret = 1L;
 
@@ -882,13 +884,13 @@ public class Redis {
 		return ret;
 	}
 
-	public static final <K, V> long putAll(RedisTemplate<K, V> redisTemplate, K key, Map<K, V> tuples, Long timeout,
-			TimeUnit unit) {
+	public static final <K, V> long putAll(final RedisTemplate<K, V> redisTemplate, final K key, final Map<K, V> tuples,
+			Long timeout, TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || tuples == null || tuples.size() <= 0) {
 			return 0;
 		}
 		unit = unit == null ? TimeUnit.MILLISECONDS : unit;
-		Long finalTimeout = convert(timeout, unit);
+		final Long finalTimeout = convert(timeout, unit);
 		Long ret = 0L;
 
 		RedisCallback<Long> action = new RedisCallback<Long>() {
@@ -954,8 +956,8 @@ public class Redis {
 		if (StringUtils.isEmpty(key)) {
 			return null;
 		}
-		
-		return (Set<T>) redisTemplate.opsForHash().values(key); 
+
+		return (Set<T>) redisTemplate.opsForHash().values(key);
 	}
 
 	public static final <K, V> boolean hContainKey(RedisTemplate<K, V> redisTemplate, K key, Object hashKey) {
@@ -974,14 +976,14 @@ public class Redis {
 	}
 
 	public static final <K, V> long hLen(RedisTemplate<K, V> redisTemplate, K key) {
-		if(StringUtils.isEmpty(key)) {
+		if (StringUtils.isEmpty(key)) {
 			return 0;
 		}
-		
+
 		Long ret = redisTemplate.opsForHash().size(key);
 		return ret == null ? 0 : ret.longValue();
 	}
-	
+
 	// Serializer
 	@SuppressWarnings("unchecked")
 	private static final <K, V> byte[] serializeKey(RedisTemplate<K, V> redisTemplate, Object key) {
