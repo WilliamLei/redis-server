@@ -113,7 +113,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <K, V, T> T get(RedisTemplate<K, V> redisTemplate, String key, Class<T> clazz) {
+	public static <K, V, T> T get(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz) {
 		return (T) redisTemplate.opsForValue().get(key);
 	}
 
