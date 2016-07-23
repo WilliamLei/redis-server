@@ -1,6 +1,7 @@
 
 package com.leipeng.redis.server.service.impl;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +19,6 @@ public class NewRedisServiceImpl implements NewRedisService {
 	@Resource(name = "objRedisTemplate")
 	private RedisTemplate<Object, Object> redisTemplate;
 
-	
 	@Override
 	public void set(Object key, Object value) {
 		set(key, value, null, null);
@@ -85,6 +85,17 @@ public class NewRedisServiceImpl implements NewRedisService {
 	@Override
 	public double getDoubleValue(Object key) {
 		Double val = getDouble(key);
+		return val == null ? 0 : val.doubleValue();
+	}
+
+	@Override
+	public BigDecimal getBigDecimal(Object key) {
+		return (BigDecimal) Redis.get(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public double getBigDecimalValue(Object key) {
+		BigDecimal val = getBigDecimal(key);
 		return val == null ? 0 : val.doubleValue();
 	}
 }

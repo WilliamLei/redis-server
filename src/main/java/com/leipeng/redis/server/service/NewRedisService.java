@@ -1,5 +1,6 @@
 package com.leipeng.redis.server.service;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -31,4 +32,8 @@ public interface NewRedisService {
 	Double getDouble(Object key);
 
 	double getDoubleValue(Object key);
+	
+	BigDecimal getBigDecimal(Object key);
+	
+	double getBigDecimalValue(Object key);
 }
