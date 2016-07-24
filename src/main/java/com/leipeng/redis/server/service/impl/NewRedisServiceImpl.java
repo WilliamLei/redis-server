@@ -380,4 +380,64 @@ public class NewRedisServiceImpl implements NewRedisService {
 		return Redis.rightPop(redisTemplate, key, clazz, num);
 	}
 
+	@Override
+	public Byte getByteElementAt(Object key, long index) {
+		return (Byte) Redis.elementAt(redisTemplate, key, index, Number.class);
+	}
+
+	@Override
+	public byte getByteValueElementAt(Object key, long index) {
+		Byte value = getByteElementAt(key, index);
+		return value == null ? 0 : value.byteValue();
+	}
+
+	@Override
+	public Long getLongElementAt(Object key, long index) {
+		return (Long) Redis.elementAt(redisTemplate, key, index, Number.class);
+	}
+
+	@Override
+	public long getLongValueElementAt(Object key, long index) {
+		Long value = getLongElementAt(key, index);
+		return value == null ? 0 : value.longValue();
+	}
+
+	@Override
+	public Integer getIntegerElementAt(Object key, long index) {
+		return (Integer) Redis.elementAt(redisTemplate, key, index, Number.class);
+	}
+
+	@Override
+	public int getIntegerValueElementAt(Object key, long index) {
+		Integer value = getIntegerElementAt(key, index);
+		return value == null ? 0 : value.intValue();
+	}
+
+	@Override
+	public Double getDoubleElementAt(Object key, long index) {
+		return (Double) Redis.elementAt(redisTemplate, key, index, Number.class);
+	}
+
+	@Override
+	public double getDoubleValueElementAt(Object key, long index) {
+		Double value = getDoubleElementAt(key, index);
+		return value == null ? 0 : value.doubleValue();
+	}
+
+	@Override
+	public BigDecimal getBigDecimalElementAt(Object key, long index) {
+		return (BigDecimal) Redis.elementAt(redisTemplate, key, index, Number.class);
+	}
+
+	@Override
+	public double getBigDecimalValueElementAt(Object key, long index) {
+		BigDecimal value = getBigDecimalElementAt(key, index);
+		return value == null ? 0 : value.doubleValue();
+	}
+
+	@Override
+	public void delFromList(Object key, Object value) {
+		Redis.lRemove(redisTemplate, key, value, 1);
+	}
+
 }

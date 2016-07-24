@@ -109,4 +109,26 @@ public interface NewRedisService {
 	<T> T rightPopObject(Object key, Class<T> clazz);
 
 	<T> List<T> rightPopObjects(Object key, Class<T> clazz, int num);
+
+	Byte getByteElementAt(Object key, long index);
+
+	byte getByteValueElementAt(Object key, long index);
+
+	Integer getIntegerElementAt(Object key, long index);
+	
+	int getIntegerValueElementAt(Object key, long index);
+	
+	Long getLongElementAt(Object key, long index);
+
+	long getLongValueElementAt(Object key, long index);
+	
+	Double getDoubleElementAt(Object key, long index);
+	
+	double getDoubleValueElementAt(Object key, long index);
+	
+	BigDecimal getBigDecimalElementAt(Object key, long index);
+	
+	double getBigDecimalValueElementAt(Object key, long index);
+	
+	void delFromList(Object key, Object value);
 }
