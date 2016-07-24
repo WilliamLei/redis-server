@@ -2,6 +2,9 @@
 package com.leipeng.redis.server.service.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -98,4 +101,173 @@ public class NewRedisServiceImpl implements NewRedisService {
 		BigDecimal val = getBigDecimal(key);
 		return val == null ? 0 : val.doubleValue();
 	}
+
+	@Override
+	public List<String> multiGetString(Collection<Object> keys) {
+		List<String> ret = Redis.multiGet(redisTemplate, keys, String.class);
+		return ret;
+	}
+
+	@Override
+	public <T> T getObj(Object key, Class<T> clazz) {
+		return Redis.get(redisTemplate, key, clazz);
+	}
+
+	@Override
+	public <T> List<T> multiGetObject(Collection<Object> keys, Class<T> clazz) {
+		return Redis.multiGet(redisTemplate, keys, clazz);
+	}
+
+	// list
+	@Override
+	public void leftPush(Object key, Object value) {
+		leftPush(key, value, null, null);
+
+	}
+
+	@Override
+	public void leftPush(Object key, Object value, Long timeout, TimeUnit unit) {
+		Redis.leftPush(redisTemplate, key, value, timeout, unit);
+	}
+
+	@Override
+	public void leftPushAll(Object key, Object[] values) {
+		leftPushAll(key, values, null, null);
+	}
+
+	@Override
+	public void leftPushAll(Object key, Object[] values, Long timeout, TimeUnit unit) {
+		Redis.leftPushAll(redisTemplate, key, values, timeout, unit);
+	}
+
+	@Override
+	public void rightPush(Object key, Object value) {
+		rightPush(key, value, null, null);
+	}
+
+	@Override
+	public void rightPush(Object key, Object value, Long timeout, TimeUnit unit) {
+		Redis.rightPush(redisTemplate, key, value, timeout, unit);
+	}
+
+	@Override
+	public void rightPushAll(Object key, Object[] values) {
+		rightPushAll(key, values, null, null);
+	}
+
+	@Override
+	public void rightPushAll(Object key, Object[] values, Long timeout, TimeUnit unit) {
+		Redis.rightPushAll(redisTemplate, key, values, timeout, unit);
+	}
+
+	@Override
+	public Byte leftPopByte(Object key) {
+		return (Byte) Redis.leftPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<Byte> leftPopBytes(Object key, int num) {
+		List<Number> results = Redis.leftPop(redisTemplate, key, Number.class, num);
+		List<Byte> ret = new ArrayList<Byte>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add(result.byteValue());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public Integer leftPopInteger(Object key) {
+		return (Integer) Redis.leftPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<Integer> leftPopIntegers(Object key, int num) {
+		List<Number> results = Redis.leftPop(redisTemplate, key, Number.class, num);
+		List<Integer> ret = new ArrayList<Integer>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add(result.intValue());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public Long leftPopLong(Object key) {
+		return (Long) Redis.leftPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<Long> leftPopLongs(Object key, int num) {
+		List<Number> results = Redis.leftPop(redisTemplate, key, Number.class, num);
+		List<Long> ret = new ArrayList<Long>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add(result.longValue());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public Double leftPopDouble(Object key) {
+		return (Double) Redis.leftPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<Double> leftPopDoubles(Object key, int num) {
+		List<Number> results = Redis.leftPop(redisTemplate, key, Number.class, num);
+		List<Double> ret = new ArrayList<Double>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add(result.doubleValue());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public BigDecimal leftPopBigDecimal(Object key) {
+		return (BigDecimal) Redis.leftPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<BigDecimal> leftPopBigDecimals(Object key, int num) {
+		List<Number> results = Redis.leftPop(redisTemplate, key, Number.class, num);
+		List<BigDecimal> ret = new ArrayList<BigDecimal>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add((BigDecimal) result);
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public <T> T leftPopObject(Object key, Class<T> clazz) {
+		return Redis.leftPop(redisTemplate, key, clazz);
+	}
+
+	@Override
+	public <T> List<T> leftPopObjects(Object key, Class<T> clazz, int num) {
+		return Redis.leftPop(redisTemplate, key, clazz, num);
+	}
+
 }
