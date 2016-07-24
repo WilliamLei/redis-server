@@ -270,4 +270,114 @@ public class NewRedisServiceImpl implements NewRedisService {
 		return Redis.leftPop(redisTemplate, key, clazz, num);
 	}
 
+	@Override
+	public Byte rightleftPopByte(Object key) {
+		return (Byte) Redis.rightPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<Byte> rightPopBytes(Object key, int num) {
+		List<Number> results = Redis.rightPop(redisTemplate, key, Number.class, num);
+		List<Byte> ret = new ArrayList<Byte>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add(result.byteValue());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public Integer rightPopInteger(Object key) {
+		return (Integer) Redis.rightPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<Integer> rightPopIntegers(Object key, int num) {
+		List<Number> results = Redis.rightPop(redisTemplate, key, Number.class, num);
+		List<Integer> ret = new ArrayList<Integer>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add(result.intValue());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public Long rightPopLong(Object key) {
+		return (Long) Redis.rightPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<Long> rightPopLongs(Object key, int num) {
+		List<Number> results = Redis.rightPop(redisTemplate, key, Number.class, num);
+		List<Long> ret = new ArrayList<Long>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add(result.longValue());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public Double rightPopDouble(Object key) {
+		return (Double) Redis.rightPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<Double> rightPopDoubles(Object key, int num) {
+		List<Number> results = Redis.rightPop(redisTemplate, key, Number.class, num);
+		List<Double> ret = new ArrayList<Double>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add(result.doubleValue());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public BigDecimal rightPopBigDecimal(Object key) {
+		return (BigDecimal) Redis.rightPop(redisTemplate, key, Number.class);
+	}
+
+	@Override
+	public List<BigDecimal> rightPopBigDecimals(Object key, int num) {
+		List<Number> results = Redis.rightPop(redisTemplate, key, Number.class, num);
+		List<BigDecimal> ret = new ArrayList<BigDecimal>();
+		if (results != null && results.size() > 0) {
+			for (Number result : results) {
+				if (result == null) {
+					break;
+				}
+				ret.add((BigDecimal) result);
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public <T> T rightPopObject(Object key, Class<T> clazz) {
+		return Redis.rightPop(redisTemplate, key, clazz);
+	}
+
+	@Override
+	public <T> List<T> rightPopObjects(Object key, Class<T> clazz, int num) {
+		return Redis.rightPop(redisTemplate, key, clazz, num);
+	}
+
 }

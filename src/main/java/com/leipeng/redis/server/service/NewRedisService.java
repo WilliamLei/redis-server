@@ -85,4 +85,28 @@ public interface NewRedisService {
 	<T> T leftPopObject(Object key, Class<T> clazz);
 
 	<T> List<T> leftPopObjects(Object key, Class<T> clazz, int num);
+
+	Byte rightleftPopByte(Object key);
+
+	List<Byte> rightPopBytes(Object key, int num);
+
+	Integer rightPopInteger(Object key);
+
+	List<Integer> rightPopIntegers(Object key, int num);
+
+	Long rightPopLong(Object key);
+
+	List<Long> rightPopLongs(Object key, int num);
+
+	Double rightPopDouble(Object key);
+
+	List<Double> rightPopDoubles(Object key, int num);
+
+	BigDecimal rightPopBigDecimal(Object key);
+
+	List<BigDecimal> rightPopBigDecimals(Object key, int num);
+
+	<T> T rightPopObject(Object key, Class<T> clazz);
+
+	<T> List<T> rightPopObjects(Object key, Class<T> clazz, int num);
 }
