@@ -115,20 +115,49 @@ public interface NewRedisService {
 	byte getByteValueElementAt(Object key, long index);
 
 	Integer getIntegerElementAt(Object key, long index);
-	
+
 	int getIntegerValueElementAt(Object key, long index);
-	
+
 	Long getLongElementAt(Object key, long index);
 
 	long getLongValueElementAt(Object key, long index);
-	
+
 	Double getDoubleElementAt(Object key, long index);
-	
+
 	double getDoubleValueElementAt(Object key, long index);
-	
+
 	BigDecimal getBigDecimalElementAt(Object key, long index);
-	
+
 	double getBigDecimalValueElementAt(Object key, long index);
-	
+
 	void delFromList(Object key, Object value);
+
+	// Set
+	void sAdd(Object key, Object value);
+
+	void sAdd(Object key, Object value, Long timeout, TimeUnit unit);
+
+	void sAddAll(Object key, Collection<Object> values);
+
+	void sAddAll(Object key, Collection<Object> values, Long timeout, TimeUnit unit);
+	
+	Byte randomByte(Object key);
+	
+	byte randomByteValue(Object key);
+	
+	Integer randomInteger(Object key);
+	
+	int randomIntegerValue(Object key);
+	
+	Long randomLong(Object key);
+	
+	long randomLongValue(Object key);
+	
+	Double randomDouble(Object key);
+	
+	double randomDoubleValue(Object key);
+	
+	BigDecimal randomBigDecimal(Object key);
+	
+	double randomBigDecimalValue(Object key);
 }

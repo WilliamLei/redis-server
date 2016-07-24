@@ -440,4 +440,85 @@ public class NewRedisServiceImpl implements NewRedisService {
 		Redis.lRemove(redisTemplate, key, value, 1);
 	}
 
+	@Override
+	public void sAdd(Object key, Object value) {
+		sAdd(key, value, null, null);
+	}
+
+	@Override
+	public void sAdd(Object key, Object value, Long timeout, TimeUnit unit) {
+		Redis.sadd(redisTemplate, key, value, timeout, unit);
+	}
+
+	@Override
+	public void sAddAll(Object key, Collection<Object> values) {
+		sAddAll(key, values, null, null);
+	}
+
+	@Override
+	public void sAddAll(Object key, Collection<Object> values, Long timeout, TimeUnit unit) {
+		Redis.saddAll(redisTemplate, key, values.toArray(), timeout, unit);
+	}
+
+	@Override
+	public Byte randomByte(Object key) {
+		List<Number> values = Redis.randomMembers(redisTemplate, key, 1, Number.class);
+		return (values == null || values.size() <= 0) ? null : (Byte) values.get(0);
+	}
+
+	@Override
+	public byte randomByteValue(Object key) {
+		Byte value = randomByte(key);
+		return value == null ? 0 : value.byteValue();
+	}
+
+	@Override
+	public Integer randomInteger(Object key) {
+		List<Number> values = Redis.randomMembers(redisTemplate, key, 1, Number.class);
+		return (values == null || values.size() <= 0) ? null : (Integer) values.get(0);
+	}
+
+	@Override
+	public int randomIntegerValue(Object key) {
+		Integer value = randomInteger(key);
+		return value == null ? 0 : value.intValue();
+	}
+
+	@Override
+	public Long randomLong(Object key) {
+		List<Number> values = Redis.randomMembers(redisTemplate, key, 1, Number.class);
+		return (values == null || values.size() <= 0) ? null : (Long) values.get(0);
+	}
+
+	@Override
+	public long randomLongValue(Object key) {
+		Long value = randomLong(key);
+		return value == null ? 0 : value.longValue();
+	}
+	
+	@Override
+	public Double randomDouble(Object key) {
+		List<Number> values = Redis.randomMembers(redisTemplate, key, 1, Number.class);
+		return (values == null || values.size() <= 0) ? null : (Double) values.get(0);
+	}
+
+	@Override
+	public double randomDoubleValue(Object key) {
+		Double value = randomDouble(key);
+		return value == null ? 0 : value.doubleValue();
+	}
+
+	@Override
+	public BigDecimal randomBigDecimal(Object key) {
+		List<Number> values = Redis.randomMembers(redisTemplate, key, 1, Number.class);
+		return (values == null || values.size() <= 0) ? null : (BigDecimal) values.get(0);
+	}
+
+	@Override
+	public double randomBigDecimalValue(Object key) {
+		BigDecimal value = randomBigDecimal(key);
+		return value == null ? 0 : value.doubleValue();
+	}
+	
+
 }
