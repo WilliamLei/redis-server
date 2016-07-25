@@ -680,7 +680,7 @@ public class Redis {
 
 				byte[] keyBytes = serializeKey(redisTemplate, key);
 				for (Entry<V, Double> tuple : tuples.entrySet()) {
-					ret += (connection.zAdd(keyBytes, tuple.getValue().doubleValue(),
+					ret += (connection.zAdd(keyBytes, (tuple.getValue() == null) ? 0 : tuple.getValue().doubleValue(),
 							serializeValue(redisTemplate, tuple.getKey())) ? 1 : 0);
 				}
 
@@ -848,6 +848,13 @@ public class Redis {
 
 		Long ret = redisTemplate.opsForZSet().zCard(key);
 		return ret == null ? 0 : ret.longValue();
+	}
+
+	public static final <K, V> long zRank(RedisTemplate<K, V> redisTemplate, K key, V value) {
+		if (StringUtils.isEmpty(key) || value == null) {
+			return Long.MAX_VALUE;
+		}
+		return redisTemplate.opsForZSet().rank(key, value);
 	}
 
 	// Map

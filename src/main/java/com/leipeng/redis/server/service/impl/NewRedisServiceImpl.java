@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -872,4 +873,220 @@ public class NewRedisServiceImpl implements NewRedisService {
 		return Redis.randomPopMembers(redisTemplate, key, num, clazz);
 	}
 
+	@Override
+	public void zAdd(Object key, Object value, double score) {
+		zAdd(key, value, score, null, null);
+	}
+
+	@Override
+	public void zAdd(Object key, Object value, double score, Long timeout, TimeUnit unit) {
+		Redis.zAdd(redisTemplate, key, value, score, timeout, unit);
+	}
+
+	@Override
+	public void zAddAll(Object key, Map<Object, Double> tuples) {
+		zAddAll(key, tuples, null, null);
+	}
+
+	@Override
+	public void zAddAll(Object key, Map<Object, Double> tuples, Long timeout, TimeUnit unit) {
+		Redis.zAddAll(redisTemplate, key, tuples, timeout, unit);
+	}
+
+	@Override
+	public void delFromZSet(Object key, Object value) {
+		Redis.zRemove(redisTemplate, key, new Object[] { value });
+	}
+
+	@Override
+	public void delFromZSet(Object key, Object[] values) {
+		Redis.zRemove(redisTemplate, key, values);
+	}
+
+	@Override
+	public List<Byte> zRangeBytes(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, false);
+		List<Byte> ret = new ArrayList<Byte>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add(temp.byteValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Integer> zRangeIntegers(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, false);
+		List<Integer> ret = new ArrayList<Integer>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add(temp.intValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Long> zRangeLongs(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, false);
+		List<Long> ret = new ArrayList<Long>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add(temp.longValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Double> zRangeDoubles(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, false);
+		List<Double> ret = new ArrayList<Double>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add(temp.doubleValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<BigDecimal> zRangeBigDecimals(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, false);
+		List<BigDecimal> ret = new ArrayList<BigDecimal>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add((BigDecimal) temp);
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public <T> List<T> zRangeObjects(Object key, long start, long end, Class<T> clazz) {
+		Set<T> temps = Redis.zrange(redisTemplate, key, start, end, clazz, false);
+		List<T> ret = new ArrayList<T>();		
+		ret.addAll(temps);
+		return ret;
+	}
+
+	@Override
+	public List<Byte> zRevRangeBytes(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, true);
+		List<Byte> ret = new ArrayList<Byte>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add(temp.byteValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Integer> zRevRangeIntegers(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, true);
+		List<Integer> ret = new ArrayList<Integer>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add(temp.intValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Long> zRevRangeLongs(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, true);
+		List<Long> ret = new ArrayList<Long>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add(temp.longValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Double> zRevRangeDoubles(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, true);
+		List<Double> ret = new ArrayList<Double>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add(temp.doubleValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<BigDecimal> zRevRangeBigDecimals(Object key, long start, long end) {
+		Set<Number> temps = Redis.zrange(redisTemplate, key, start, end, Number.class, true);
+		List<BigDecimal> ret = new ArrayList<BigDecimal>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if(temp == null) {
+					break;
+				}
+				ret.add((BigDecimal) temp);
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public <T> List<T> zRevRangeObjects(Object key, long start, long end, Class<T> clazz) {
+		Set<T> temps = Redis.zrange(redisTemplate, key, start, end, clazz, true);
+		List<T> ret = new ArrayList<T>();		
+		ret.addAll(temps);
+		return ret;
+	}
+	
 }

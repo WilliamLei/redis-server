@@ -210,7 +210,7 @@ public interface NewRedisService {
 	double randomPopBigDecimalValue(Object key);
 
 	<T> T randomPopObject(Object key, Class<T> clazz);
-	
+
 	List<Byte> randomPopBytes(Object key, int num);
 
 	List<Integer> randomPopIntegers(Object key, int num);
@@ -222,7 +222,43 @@ public interface NewRedisService {
 	List<BigDecimal> randomPopBigDecimals(Object key, int num);
 
 	<T> List<T> randomPopObjects(Object key, int num, Class<T> clazz);
-	
+
 	long sizeOfSet(Object key);
-	
+
+	// Zset
+	void zAdd(Object key, Object value, double score);
+
+	void zAdd(Object key, Object value, double score, Long timeout, TimeUnit unit);
+
+	void zAddAll(Object key, Map<Object, Double> tuples);
+
+	void zAddAll(Object key, Map<Object, Double> tuples, Long timeout, TimeUnit unit);
+
+	void delFromZSet(Object key, Object value);
+
+	void delFromZSet(Object key, Object[] values);
+
+	List<Byte> zRangeBytes(Object key, long start, long end);
+
+	List<Integer> zRangeIntegers(Object key, long start, long end);
+
+	List<Long> zRangeLongs(Object key, long start, long end);
+
+	List<Double> zRangeDoubles(Object key, long start, long end);
+
+	List<BigDecimal> zRangeBigDecimals(Object key, long start, long end);
+
+	<T> List<T> zRangeObjects(Object key, long start, long end, Class<T> clazz);
+
+	List<Byte> zRevRangeBytes(Object key, long start, long end);
+
+	List<Integer> zRevRangeIntegers(Object key, long start, long end);
+
+	List<Long> zRevRangeLongs(Object key, long start, long end);
+
+	List<Double> zRevRangeDoubles(Object key, long start, long end);
+
+	List<BigDecimal> zRevRangeBigDecimals(Object key, long start, long end);
+
+	<T> List<T> zRevRangeObjects(Object key, long start, long end, Class<T> clazz);
 }
