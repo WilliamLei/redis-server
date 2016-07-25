@@ -177,4 +177,52 @@ public interface NewRedisService {
 
 	<T> List<T> randomObjects(Object key, int num, Class<T> clazz);
 
+	List<Byte> randomDistinctBytes(Object key, int num);
+
+	List<Integer> randomDistinctIntegers(Object key, int num);
+
+	List<Long> randomDistinctLongs(Object key, int num);
+
+	List<Double> randomDistinctDoubles(Object key, int num);
+
+	List<BigDecimal> randomDistinctBigDecimals(Object key, int num);
+
+	<T> List<T> randomDistinctObjects(Object key, int num, Class<T> clazz);
+
+	Byte randomPopByte(Object key);
+
+	byte randomPopByteValue(Object key);
+
+	Integer randomPopInteger(Object key);
+
+	int randomPopIntegerValue(Object key);
+
+	Long randomPopLong(Object key);
+
+	long randomPopLongValue(Object key);
+
+	Double randomPopDouble(Object key);
+
+	double randomPopDoubleValue(Object key);
+
+	BigDecimal randomPopBigDecimal(Object key);
+
+	double randomPopBigDecimalValue(Object key);
+
+	<T> T randomPopObject(Object key, Class<T> clazz);
+	
+	List<Byte> randomPopBytes(Object key, int num);
+
+	List<Integer> randomPopIntegers(Object key, int num);
+
+	List<Long> randomPopLongs(Object key, int num);
+
+	List<Double> randomPopDoubles(Object key, int num);
+
+	List<BigDecimal> randomPopBigDecimals(Object key, int num);
+
+	<T> List<T> randomPopObjects(Object key, int num, Class<T> clazz);
+	
+	long sizeOfSet(Object key);
+	
 }

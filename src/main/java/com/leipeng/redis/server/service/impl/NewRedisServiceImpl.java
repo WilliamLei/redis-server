@@ -535,16 +535,16 @@ public class NewRedisServiceImpl implements NewRedisService {
 	public List<Byte> randomBytes(Object key, int num) {
 		List<Number> temp = Redis.randomMembers(redisTemplate, key, num, Number.class);
 		List<Byte> ret = new ArrayList<Byte>();
-		
-		if(temp == null || temp.size() <= 0) {
-			for(Number value : temp) {
-				if(value == null) {
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
 					break;
 				}
 				ret.add(value.byteValue());
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -552,16 +552,16 @@ public class NewRedisServiceImpl implements NewRedisService {
 	public List<Integer> randomIntegers(Object key, int num) {
 		List<Number> temp = Redis.randomMembers(redisTemplate, key, num, Number.class);
 		List<Integer> ret = new ArrayList<Integer>();
-		
-		if(temp == null || temp.size() <= 0) {
-			for(Number value : temp) {
-				if(value == null) {
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
 					break;
 				}
 				ret.add(value.intValue());
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -569,16 +569,16 @@ public class NewRedisServiceImpl implements NewRedisService {
 	public List<Long> randomLongs(Object key, int num) {
 		List<Number> temp = Redis.randomMembers(redisTemplate, key, num, Number.class);
 		List<Long> ret = new ArrayList<Long>();
-		
-		if(temp == null || temp.size() <= 0) {
-			for(Number value : temp) {
-				if(value == null) {
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
 					break;
 				}
 				ret.add(value.longValue());
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -586,16 +586,16 @@ public class NewRedisServiceImpl implements NewRedisService {
 	public List<Double> randomDoubles(Object key, int num) {
 		List<Number> temp = Redis.randomMembers(redisTemplate, key, num, Number.class);
 		List<Double> ret = new ArrayList<Double>();
-		
-		if(temp == null || temp.size() <= 0) {
-			for(Number value : temp) {
-				if(value == null) {
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
 					break;
 				}
 				ret.add(value.doubleValue());
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -603,22 +603,273 @@ public class NewRedisServiceImpl implements NewRedisService {
 	public List<BigDecimal> randomBigDecimals(Object key, int num) {
 		List<Number> temp = Redis.randomMembers(redisTemplate, key, num, Number.class);
 		List<BigDecimal> ret = new ArrayList<BigDecimal>();
-		
-		if(temp == null || temp.size() <= 0) {
-			for(Number value : temp) {
-				if(value == null) {
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
 					break;
 				}
 				ret.add((BigDecimal) value);
 			}
 		}
-		
+
 		return ret;
 	}
 
 	@Override
 	public <T> List<T> randomObjects(Object key, int num, Class<T> clazz) {
 		return Redis.randomMembers(redisTemplate, key, num, clazz);
+	}
+
+	@Override
+	public List<Byte> randomDistinctBytes(Object key, int num) {
+		List<Number> temp = Redis.randomDistinctMembers(redisTemplate, key, num, Number.class);
+		List<Byte> ret = new ArrayList<Byte>();
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
+					break;
+				}
+				ret.add(value.byteValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Integer> randomDistinctIntegers(Object key, int num) {
+		List<Number> temp = Redis.randomDistinctMembers(redisTemplate, key, num, Number.class);
+		List<Integer> ret = new ArrayList<Integer>();
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
+					break;
+				}
+				ret.add(value.intValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Long> randomDistinctLongs(Object key, int num) {
+		List<Number> temp = Redis.randomDistinctMembers(redisTemplate, key, num, Number.class);
+		List<Long> ret = new ArrayList<Long>();
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
+					break;
+				}
+				ret.add(value.longValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Double> randomDistinctDoubles(Object key, int num) {
+		List<Number> temp = Redis.randomDistinctMembers(redisTemplate, key, num, Number.class);
+		List<Double> ret = new ArrayList<Double>();
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
+					break;
+				}
+				ret.add(value.doubleValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<BigDecimal> randomDistinctBigDecimals(Object key, int num) {
+		List<Number> temp = Redis.randomDistinctMembers(redisTemplate, key, num, Number.class);
+		List<BigDecimal> ret = new ArrayList<BigDecimal>();
+
+		if (temp != null && temp.size() > 0) {
+			for (Number value : temp) {
+				if (value == null) {
+					break;
+				}
+				ret.add((BigDecimal) value);
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public <T> List<T> randomDistinctObjects(Object key, int num, Class<T> clazz) {
+		return Redis.randomDistinctMembers(redisTemplate, key, num, clazz);
+	}
+
+	@Override
+	public long sizeOfSet(Object key) {
+		return Redis.sCard(redisTemplate, key);
+	}
+
+	@Override
+	public Byte randomPopByte(Object key) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, 1, Number.class);
+		return (temps == null || temps.size() <= 0) ? null : (Byte) temps.get(0);
+	}
+
+	@Override
+	public byte randomPopByteValue(Object key) {
+		Byte value = randomByte(key);
+		return value == null ? 0 : value.byteValue();
+	}
+
+	@Override
+	public Integer randomPopInteger(Object key) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, 1, Number.class);
+		return (temps == null || temps.size() <= 0) ? null : (Integer) temps.get(0);
+	}
+
+	@Override
+	public int randomPopIntegerValue(Object key) {
+		Integer value = randomInteger(key);
+		return value == null ? 0 : value.intValue();
+	}
+
+	@Override
+	public Long randomPopLong(Object key) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, 1, Number.class);
+		return (temps == null || temps.size() <= 0) ? null : (Long) temps.get(0);
+	}
+
+	@Override
+	public long randomPopLongValue(Object key) {
+		Long value = randomLong(key);
+		return value == null ? 0 : value.longValue();
+	}
+
+	@Override
+	public Double randomPopDouble(Object key) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, 1, Number.class);
+		return (temps == null || temps.size() <= 0) ? null : (Double) temps.get(0);
+	}
+
+	@Override
+	public double randomPopDoubleValue(Object key) {
+		Double value = randomDouble(key);
+		return value == null ? 0 : value.doubleValue();
+	}
+
+	@Override
+	public BigDecimal randomPopBigDecimal(Object key) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, 1, Number.class);
+		return (temps == null || temps.size() <= 0) ? null : (BigDecimal) temps.get(0);
+	}
+
+	@Override
+	public double randomPopBigDecimalValue(Object key) {
+		BigDecimal value = randomBigDecimal(key);
+		return value == null ? 0 : value.doubleValue();
+	}
+
+	@Override
+	public <T> T randomPopObject(Object key, Class<T> clazz) {
+		List<T> temps = Redis.randomPopMembers(redisTemplate, key, 1, clazz);
+		return (temps == null || temps.size() <= 0) ? null : temps.get(0);
+	}
+
+	@Override
+	public List<Byte> randomPopBytes(Object key, int num) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, num, Number.class);
+		List<Byte> ret = new ArrayList<Byte>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if (temp == null) {
+					break;
+				}
+				ret.add(temp.byteValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Integer> randomPopIntegers(Object key, int num) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, num, Number.class);
+		List<Integer> ret = new ArrayList<Integer>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if (temp == null) {
+					break;
+				}
+				ret.add(temp.intValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Long> randomPopLongs(Object key, int num) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, num, Number.class);
+		List<Long> ret = new ArrayList<Long>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if (temp == null) {
+					break;
+				}
+				ret.add(temp.longValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Double> randomPopDoubles(Object key, int num) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, num, Number.class);
+		List<Double> ret = new ArrayList<Double>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if (temp == null) {
+					break;
+				}
+				ret.add(temp.doubleValue());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<BigDecimal> randomPopBigDecimals(Object key, int num) {
+		List<Number> temps = Redis.randomPopMembers(redisTemplate, key, num, Number.class);
+		List<BigDecimal> ret = new ArrayList<BigDecimal>();
+
+		if (temps != null && temps.size() > 0) {
+			for (Number temp : temps) {
+				if (temp == null) {
+					break;
+				}
+				ret.add((BigDecimal) temp);
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public <T> List<T> randomPopObjects(Object key, int num, Class<T> clazz) {
+		return Redis.randomPopMembers(redisTemplate, key, num, clazz);
 	}
 
 }
