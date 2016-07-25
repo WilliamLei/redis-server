@@ -132,6 +132,8 @@ public interface NewRedisService {
 
 	void delFromList(Object key, Object value);
 
+	long lengthOfList(Object key);
+
 	// Set
 	void sAdd(Object key, Object value);
 
@@ -140,24 +142,39 @@ public interface NewRedisService {
 	void sAddAll(Object key, Collection<Object> values);
 
 	void sAddAll(Object key, Collection<Object> values, Long timeout, TimeUnit unit);
-	
+
 	Byte randomByte(Object key);
-	
+
 	byte randomByteValue(Object key);
-	
+
 	Integer randomInteger(Object key);
-	
+
 	int randomIntegerValue(Object key);
-	
+
 	Long randomLong(Object key);
-	
+
 	long randomLongValue(Object key);
-	
+
 	Double randomDouble(Object key);
-	
+
 	double randomDoubleValue(Object key);
-	
+
 	BigDecimal randomBigDecimal(Object key);
-	
+
 	double randomBigDecimalValue(Object key);
+
+	<T> T randomObject(Object key, Class<T> clazz);
+
+	List<Byte> randomBytes(Object key, int num);
+
+	List<Integer> randomIntegers(Object key, int num);
+
+	List<Long> randomLongs(Object key, int num);
+
+	List<Double> randomDoubles(Object key, int num);
+
+	List<BigDecimal> randomBigDecimals(Object key, int num);
+
+	<T> List<T> randomObjects(Object key, int num, Class<T> clazz);
+
 }
