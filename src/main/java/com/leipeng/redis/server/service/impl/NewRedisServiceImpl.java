@@ -4,6 +4,7 @@ package com.leipeng.redis.server.service.impl;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
 import org.springframework.stereotype.Service;
 
 import com.leipeng.redis.server.service.NewRedisService;
@@ -910,7 +912,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add(temp.byteValue());
@@ -927,7 +929,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add(temp.intValue());
@@ -944,7 +946,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add(temp.longValue());
@@ -961,7 +963,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add(temp.doubleValue());
@@ -978,7 +980,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add((BigDecimal) temp);
@@ -991,7 +993,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 	@Override
 	public <T> List<T> zRangeObjects(Object key, long start, long end, Class<T> clazz) {
 		Set<T> temps = Redis.zrange(redisTemplate, key, start, end, clazz, false);
-		List<T> ret = new ArrayList<T>();		
+		List<T> ret = new ArrayList<T>();
 		ret.addAll(temps);
 		return ret;
 	}
@@ -1003,7 +1005,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add(temp.byteValue());
@@ -1020,7 +1022,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add(temp.intValue());
@@ -1037,7 +1039,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add(temp.longValue());
@@ -1054,7 +1056,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add(temp.doubleValue());
@@ -1071,7 +1073,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 
 		if (temps != null && temps.size() > 0) {
 			for (Number temp : temps) {
-				if(temp == null) {
+				if (temp == null) {
 					break;
 				}
 				ret.add((BigDecimal) temp);
@@ -1084,9 +1086,93 @@ public class NewRedisServiceImpl implements NewRedisService {
 	@Override
 	public <T> List<T> zRevRangeObjects(Object key, long start, long end, Class<T> clazz) {
 		Set<T> temps = Redis.zrange(redisTemplate, key, start, end, clazz, true);
-		List<T> ret = new ArrayList<T>();		
+		List<T> ret = new ArrayList<T>();
 		ret.addAll(temps);
 		return ret;
 	}
-	
+
+	@Override
+	public Map<Byte, Double> zRangeBytesWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, false);
+		Map<Byte, Double> ret = new LinkedHashMap<Byte, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put(value.getValue().byteValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public Map<Integer, Double> zRangeIntegersWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, false);
+		Map<Integer, Double> ret = new LinkedHashMap<Integer, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put(value.getValue().intValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public Map<Long, Double> zRangeLongsWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, false);
+		Map<Long, Double> ret = new LinkedHashMap<Long, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put(value.getValue().longValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public Map<Double, Double> zRangeDoublesWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, false);
+		Map<Double, Double> ret = new LinkedHashMap<Double, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put(value.getValue().doubleValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public Map<BigDecimal, Double> zRangeBigDecimalsWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, false);
+		Map<BigDecimal, Double> ret = new LinkedHashMap<BigDecimal, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put((BigDecimal) value.getValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public <T> Map<T, Double> zRangeObjectsWithScore(Object key, long start, long end, Class<T> clazz) {
+		Set<TypedTuple<T>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, clazz, false);
+		Map<T, Double> ret = new LinkedHashMap<T, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<T> value : values) {
+				ret.put(value.getValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
 }

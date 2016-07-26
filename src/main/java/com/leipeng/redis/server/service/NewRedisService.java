@@ -249,6 +249,18 @@ public interface NewRedisService {
 	List<BigDecimal> zRangeBigDecimals(Object key, long start, long end);
 
 	<T> List<T> zRangeObjects(Object key, long start, long end, Class<T> clazz);
+	
+	Map<Byte, Double> zRangeBytesWithScore(Object key, long start, long end);
+
+	Map<Integer, Double> zRangeIntegersWithScore(Object key, long start, long end);
+
+	Map<Long, Double> zRangeLongsWithScore(Object key, long start, long end);
+
+	Map<Double, Double> zRangeDoublesWithScore(Object key, long start, long end);
+
+	Map<BigDecimal, Double> zRangeBigDecimalsWithScore(Object key, long start, long end);
+
+	<T> Map<T, Double> zRangeObjectsWithScore(Object key, long start, long end, Class<T> clazz);
 
 	List<Byte> zRevRangeBytes(Object key, long start, long end);
 
