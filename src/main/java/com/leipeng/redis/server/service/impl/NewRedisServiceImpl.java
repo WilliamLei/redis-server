@@ -1359,4 +1359,106 @@ public class NewRedisServiceImpl implements NewRedisService {
 		return ret;
 	}
 
+	@Override
+	public List<Byte> zRevRangeBytesByScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse) {
+		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		List<Byte> ret = new ArrayList<Byte>();
+		
+		if (values != null && values.size() > 0) {
+			for (Number value : values) {
+				if (value != null) {
+					ret.add(value.byteValue());
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Integer> zRevRangeIntegersByScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse) {
+		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		List<Integer> ret = new ArrayList<Integer>();
+		
+		if (values != null && values.size() > 0) {
+			for (Number value : values) {
+				if (value != null) {
+					ret.add(value.intValue());
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Long> zRevRangeLongByScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse) {
+		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		List<Long> ret = new ArrayList<Long>();
+		
+		if (values != null && values.size() > 0) {
+			for (Number value : values) {
+				if (value != null) {
+					ret.add(value.longValue());
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<Double> zRevRangeDoublesByScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse) {
+		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		List<Double> ret = new ArrayList<Double>();
+		
+		if (values != null && values.size() > 0) {
+			for (Number value : values) {
+				if (value != null) {
+					ret.add(value.doubleValue());
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public List<BigDecimal> zRevRangeBigDecimalsByScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse) {
+		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		List<BigDecimal> ret = new ArrayList<BigDecimal>();
+		
+		if (values != null && values.size() > 0) {
+			for (Number value : values) {
+				if (value != null) {
+					ret.add((BigDecimal) value);
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public <T> List<T> zRevRangeBytesByScore(Object key, double min, double max, long offset, long limit,
+			Class<T> clazz, boolean reverse) {
+		Set<T> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, clazz, true);
+		List<T> ret = new ArrayList<T>();
+		
+		if (values != null && values.size() > 0) {
+			for (T value : values) {
+				if (value != null) {
+					ret.add(value);
+				}
+			}
+		}
+
+		return ret;
+	}
+
 }
