@@ -1175,4 +1175,88 @@ public class NewRedisServiceImpl implements NewRedisService {
 		return ret;
 	}
 
+	@Override
+	public Map<Byte, Double> zRevRangeBytesWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, true);
+		Map<Byte, Double> ret = new LinkedHashMap<Byte, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put(value.getValue().byteValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public Map<Integer, Double> zRevRangeIntegersWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, true);
+		Map<Integer, Double> ret = new LinkedHashMap<Integer, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put(value.getValue().intValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public Map<Long, Double> zRevRangeLongsWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, true);
+		Map<Long, Double> ret = new LinkedHashMap<Long, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put(value.getValue().longValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public Map<Double, Double> zRevRangeDoublesWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, true);
+		Map<Double, Double> ret = new LinkedHashMap<Double, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put(value.getValue().doubleValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public Map<BigDecimal, Double> zRevRangeBigDecimalsWithScore(Object key, long start, long end) {
+		Set<TypedTuple<Number>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, Number.class, true);
+		Map<BigDecimal, Double> ret = new LinkedHashMap<BigDecimal, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<Number> value : values) {
+				ret.put((BigDecimal) value.getValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public <T> Map<T, Double> zRevRangeObjectsWithScore(Object key, long start, long end, Class<T> clazz) {
+		Set<TypedTuple<T>> values = Redis.zrangeWithScore(redisTemplate, key, start, end, clazz, true);
+		Map<T, Double> ret = new LinkedHashMap<T, Double>();
+
+		if (values != null && values.size() > 0) {
+			for(TypedTuple<T> value : values) {
+				ret.put(value.getValue(), value.getScore());
+			}
+		}
+
+		return ret;
+	}
+
 }
