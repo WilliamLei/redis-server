@@ -302,7 +302,8 @@ public interface NewRedisService {
 
 	List<Byte> zRevRangeBytesByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
 
-	List<Integer> zRevRangeIntegersByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
+	List<Integer> zRevRangeIntegersByScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse);
 
 	List<Long> zRevRangeLongByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
 
@@ -313,4 +314,22 @@ public interface NewRedisService {
 
 	<T> List<T> zRevRangeObjectsByScore(Object key, double min, double max, long offset, long limit, Class<T> clazz,
 			boolean reverse);
+
+	Map<Byte, Double> zRevRangeBytesByScoreWithScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse);
+
+	Map<Integer, Double> zRevRangeIntegersByScoreWithScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse);
+
+	Map<Long, Double> zRevRangeLongsByScoreWithScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse);
+
+	Map<Double, Double> zRevRangeDoublesByScoreWithScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse);
+
+	Map<BigDecimal, Double> zRevRangeBigDecimalsByScoreWithScore(Object key, double min, double max, long offset,
+			long limit, boolean reverse);
+
+	<T> Map<T, Double> zRevRangeObjectsByScoreWithScore(Object key, double min, double max, long offset, long limit,
+			Class<T> clazz, boolean reverse);
 }

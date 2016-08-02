@@ -1461,4 +1461,93 @@ public class NewRedisServiceImpl implements NewRedisService {
 		return ret;
 	}
 
+	@Override
+	public Map<Byte, Double> zRevRangeBytesByScoreWithScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		Map<Byte, Double> pairs = new LinkedHashMap<Byte, Double>(); 
+		
+		if(tuples != null && tuples.size() > 0) {
+			for(TypedTuple<Number> tuple : tuples) {
+				pairs.put(tuple.getValue().byteValue(), tuple.getScore());
+			}
+		}
+		
+		return pairs;
+	}
+
+	@Override
+	public Map<Long, Double> zRevRangeLongsByScoreWithScore(Object key, double min, double max, long offset, long limit,
+			boolean reverse) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		Map<Long, Double> pairs = new LinkedHashMap<Long, Double>(); 
+		
+		if(tuples != null && tuples.size() > 0) {
+			for(TypedTuple<Number> tuple : tuples) {
+				pairs.put(tuple.getValue().longValue(), tuple.getScore());
+			}
+		}
+		
+		return pairs;
+	}
+
+	@Override
+	public Map<Double, Double> zRevRangeDoublesByScoreWithScore(Object key, double min, double max, long offset,
+			long limit, boolean reverse) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		Map<Double, Double> pairs = new LinkedHashMap<Double, Double>(); 
+		
+		if(tuples != null && tuples.size() > 0) {
+			for(TypedTuple<Number> tuple : tuples) {
+				pairs.put(tuple.getValue().doubleValue(), tuple.getScore());
+			}
+		}
+		
+		return pairs;
+	}
+
+	@Override
+	public Map<BigDecimal, Double> zRevRangeBigDecimalsByScoreWithScore(Object key, double min, double max, long offset,
+			long limit, boolean reverse) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		Map<BigDecimal, Double> pairs = new LinkedHashMap<BigDecimal, Double>(); 
+		
+		if(tuples != null && tuples.size() > 0) {
+			for(TypedTuple<Number> tuple : tuples) {
+				pairs.put((BigDecimal) tuple.getValue(), tuple.getScore());
+			}
+		}
+		
+		return pairs;
+	}
+
+	@Override
+	public Map<Integer, Double> zRevRangeIntegersByScoreWithScore(Object key, double min, double max, long offset,
+			long limit, boolean reverse) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
+		Map<Integer, Double> pairs = new LinkedHashMap<Integer, Double>(); 
+		
+		if(tuples != null && tuples.size() > 0) {
+			for(TypedTuple<Number> tuple : tuples) {
+				pairs.put(tuple.getValue().intValue(), tuple.getScore());
+			}
+		}
+		
+		return pairs;
+	}
+
+	@Override
+	public <T> Map<T, Double> zRevRangeObjectsByScoreWithScore(Object key, double min, double max, long offset,
+			long limit, Class<T> clazz, boolean reverse) {
+		Set<TypedTuple<T>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, clazz, true);
+		Map<T, Double> pairs = new LinkedHashMap<T, Double>(); 
+		
+		if(tuples != null && tuples.size() > 0) {
+			for(TypedTuple<T> tuple : tuples) {
+				pairs.put(tuple.getValue(), tuple.getScore());
+			}
+		}
+		return pairs;
+	}
+
 }
