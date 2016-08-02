@@ -1343,7 +1343,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 	}
 
 	@Override
-	public <T> List<T> zRangeBytesByScore(Object key, double min, double max, long offset, long limit, Class<T> clazz,
+	public <T> List<T> zRangeObjectsByScore(Object key, double min, double max, long offset, long limit, Class<T> clazz,
 			boolean reverse) {
 		Set<T> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, clazz, false);
 		List<T> ret = new ArrayList<T>();
@@ -1445,7 +1445,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 	}
 
 	@Override
-	public <T> List<T> zRevRangeBytesByScore(Object key, double min, double max, long offset, long limit,
+	public <T> List<T> zRevRangeObjectsByScore(Object key, double min, double max, long offset, long limit,
 			Class<T> clazz, boolean reverse) {
 		Set<T> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, clazz, true);
 		List<T> ret = new ArrayList<T>();

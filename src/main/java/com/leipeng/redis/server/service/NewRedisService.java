@@ -297,7 +297,7 @@ public interface NewRedisService {
 	List<BigDecimal> zRangeBigDecimalsByScore(Object key, double min, double max, long offset, long limit,
 			boolean reverse);
 
-	<T> List<T> zRangeBytesByScore(Object key, double min, double max, long offset, long limit, Class<T> clazz,
+	<T> List<T> zRangeObjectsByScore(Object key, double min, double max, long offset, long limit, Class<T> clazz,
 			boolean reverse);
 
 	List<Byte> zRevRangeBytesByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
@@ -311,6 +311,6 @@ public interface NewRedisService {
 	List<BigDecimal> zRevRangeBigDecimalsByScore(Object key, double min, double max, long offset, long limit,
 			boolean reverse);
 
-	<T> List<T> zRevRangeBytesByScore(Object key, double min, double max, long offset, long limit, Class<T> clazz,
+	<T> List<T> zRevRangeObjectsByScore(Object key, double min, double max, long offset, long limit, Class<T> clazz,
 			boolean reverse);
 }
