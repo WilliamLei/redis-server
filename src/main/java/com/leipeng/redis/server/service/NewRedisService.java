@@ -332,10 +332,43 @@ public interface NewRedisService {
 
 	<T> Map<T, Double> zRevRangeObjectsByScoreWithScore(Object key, double min, double max, long offset, long limit,
 			Class<T> clazz, boolean reverse);
-	
+
 	double increaseScoreInZset(Object key, Object value, double delta);
-	
+
 	long sizeOfZSet(Object key);
-	
+
 	long zRank(Object key, Object value);
+
+	// Hash
+	long put(Object key, Object hashKey, Object value);
+
+	long put(Object key, Object hashKey, Object value, Long timeout, TimeUnit unit);
+
+	long putAll(Object key, Object hashKey, Map<Object, Object> value);
+
+	long putAll(Object key, Object hashKey, Map<Object, Object> value, Long timeout, TimeUnit unit);
+
+	Byte hGetByte(Object key, Object hashKey);
+
+	Integer hGetInteger(Object key, Object hashKey);
+
+	Long hGetLong(Object key, Object hashKey);
+
+	Double hGetDouble(Object key, Object hashKey);
+
+	BigDecimal hGetBigDecimal(Object key, Object hashKey);
+
+	<T> T hGetObject(Object key, Object hashKey, Class<T> clazz);
+
+	<T> List<T> hMultiGetObjects(Object key, Collection<Object> hashKeys, Class<T> clazz);
+
+	<T> Map<Object, T> hGetAll(Object key, Class<T> clazz);
+	
+	boolean hContainKey(Object key, Object hashKey);
+	
+	int delFromHash(Object key, Object hashKey);
+	
+	int delAllFromHash(Object key, Object[] hashKeys);
+	
+	long sizeOfHash(Object key);
 }

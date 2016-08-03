@@ -1263,7 +1263,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 	public List<Byte> zRangeBytesByScore(Object key, double min, double max, long offset, long limit, boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, false);
 		List<Byte> ret = new ArrayList<Byte>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1280,7 +1280,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, false);
 		List<Integer> ret = new ArrayList<Integer>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1296,7 +1296,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 	public List<Long> zRangeLongByScore(Object key, double min, double max, long offset, long limit, boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, false);
 		List<Long> ret = new ArrayList<Long>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1313,7 +1313,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, false);
 		List<Double> ret = new ArrayList<Double>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1330,7 +1330,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, false);
 		List<BigDecimal> ret = new ArrayList<BigDecimal>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1347,7 +1347,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			boolean reverse) {
 		Set<T> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, clazz, false);
 		List<T> ret = new ArrayList<T>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (T value : values) {
 				if (value != null) {
@@ -1364,7 +1364,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
 		List<Byte> ret = new ArrayList<Byte>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1381,7 +1381,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
 		List<Integer> ret = new ArrayList<Integer>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1398,7 +1398,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
 		List<Long> ret = new ArrayList<Long>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1415,7 +1415,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
 		List<Double> ret = new ArrayList<Double>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1432,7 +1432,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			boolean reverse) {
 		Set<Number> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
 		List<BigDecimal> ret = new ArrayList<BigDecimal>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (Number value : values) {
 				if (value != null) {
@@ -1449,7 +1449,7 @@ public class NewRedisServiceImpl implements NewRedisService {
 			Class<T> clazz, boolean reverse) {
 		Set<T> values = Redis.zrangeByScore(redisTemplate, key, min, max, offset, limit, clazz, true);
 		List<T> ret = new ArrayList<T>();
-		
+
 		if (values != null && values.size() > 0) {
 			for (T value : values) {
 				if (value != null) {
@@ -1464,86 +1464,92 @@ public class NewRedisServiceImpl implements NewRedisService {
 	@Override
 	public Map<Byte, Double> zRevRangeBytesByScoreWithScore(Object key, double min, double max, long offset, long limit,
 			boolean reverse) {
-		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
-		Map<Byte, Double> pairs = new LinkedHashMap<Byte, Double>(); 
-		
-		if(tuples != null && tuples.size() > 0) {
-			for(TypedTuple<Number> tuple : tuples) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit,
+				Number.class, true);
+		Map<Byte, Double> pairs = new LinkedHashMap<Byte, Double>();
+
+		if (tuples != null && tuples.size() > 0) {
+			for (TypedTuple<Number> tuple : tuples) {
 				pairs.put(tuple.getValue().byteValue(), tuple.getScore());
 			}
 		}
-		
+
 		return pairs;
 	}
 
 	@Override
 	public Map<Long, Double> zRevRangeLongsByScoreWithScore(Object key, double min, double max, long offset, long limit,
 			boolean reverse) {
-		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
-		Map<Long, Double> pairs = new LinkedHashMap<Long, Double>(); 
-		
-		if(tuples != null && tuples.size() > 0) {
-			for(TypedTuple<Number> tuple : tuples) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit,
+				Number.class, true);
+		Map<Long, Double> pairs = new LinkedHashMap<Long, Double>();
+
+		if (tuples != null && tuples.size() > 0) {
+			for (TypedTuple<Number> tuple : tuples) {
 				pairs.put(tuple.getValue().longValue(), tuple.getScore());
 			}
 		}
-		
+
 		return pairs;
 	}
 
 	@Override
 	public Map<Double, Double> zRevRangeDoublesByScoreWithScore(Object key, double min, double max, long offset,
 			long limit, boolean reverse) {
-		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
-		Map<Double, Double> pairs = new LinkedHashMap<Double, Double>(); 
-		
-		if(tuples != null && tuples.size() > 0) {
-			for(TypedTuple<Number> tuple : tuples) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit,
+				Number.class, true);
+		Map<Double, Double> pairs = new LinkedHashMap<Double, Double>();
+
+		if (tuples != null && tuples.size() > 0) {
+			for (TypedTuple<Number> tuple : tuples) {
 				pairs.put(tuple.getValue().doubleValue(), tuple.getScore());
 			}
 		}
-		
+
 		return pairs;
 	}
 
 	@Override
 	public Map<BigDecimal, Double> zRevRangeBigDecimalsByScoreWithScore(Object key, double min, double max, long offset,
 			long limit, boolean reverse) {
-		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
-		Map<BigDecimal, Double> pairs = new LinkedHashMap<BigDecimal, Double>(); 
-		
-		if(tuples != null && tuples.size() > 0) {
-			for(TypedTuple<Number> tuple : tuples) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit,
+				Number.class, true);
+		Map<BigDecimal, Double> pairs = new LinkedHashMap<BigDecimal, Double>();
+
+		if (tuples != null && tuples.size() > 0) {
+			for (TypedTuple<Number> tuple : tuples) {
 				pairs.put((BigDecimal) tuple.getValue(), tuple.getScore());
 			}
 		}
-		
+
 		return pairs;
 	}
 
 	@Override
 	public Map<Integer, Double> zRevRangeIntegersByScoreWithScore(Object key, double min, double max, long offset,
 			long limit, boolean reverse) {
-		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, Number.class, true);
-		Map<Integer, Double> pairs = new LinkedHashMap<Integer, Double>(); 
-		
-		if(tuples != null && tuples.size() > 0) {
-			for(TypedTuple<Number> tuple : tuples) {
+		Set<TypedTuple<Number>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit,
+				Number.class, true);
+		Map<Integer, Double> pairs = new LinkedHashMap<Integer, Double>();
+
+		if (tuples != null && tuples.size() > 0) {
+			for (TypedTuple<Number> tuple : tuples) {
 				pairs.put(tuple.getValue().intValue(), tuple.getScore());
 			}
 		}
-		
+
 		return pairs;
 	}
 
 	@Override
 	public <T> Map<T, Double> zRevRangeObjectsByScoreWithScore(Object key, double min, double max, long offset,
 			long limit, Class<T> clazz, boolean reverse) {
-		Set<TypedTuple<T>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, clazz, true);
-		Map<T, Double> pairs = new LinkedHashMap<T, Double>(); 
-		
-		if(tuples != null && tuples.size() > 0) {
-			for(TypedTuple<T> tuple : tuples) {
+		Set<TypedTuple<T>> tuples = Redis.zrangeByScoreWithScore(redisTemplate, key, min, max, offset, limit, clazz,
+				true);
+		Map<T, Double> pairs = new LinkedHashMap<T, Double>();
+
+		if (tuples != null && tuples.size() > 0) {
+			for (TypedTuple<T> tuple : tuples) {
 				pairs.put(tuple.getValue(), tuple.getScore());
 			}
 		}
@@ -1565,5 +1571,88 @@ public class NewRedisServiceImpl implements NewRedisService {
 		return Redis.zRank(redisTemplate, key, value);
 	}
 
-	
+	@Override
+	public long put(Object key, Object hashKey, Object value) {
+		return put(key, hashKey, value, null, null);
+	}
+
+	@Override
+	public long put(Object key, Object hashKey, Object value, Long timeout, TimeUnit unit) {
+		return Redis.put(redisTemplate, key, hashKey, value, timeout, unit);
+	}
+
+	@Override
+	public long putAll(Object key, Object hashKey, Map<Object, Object> value) {
+		return putAll(key, hashKey, value, null, null);
+	}
+
+	@Override
+	public long putAll(Object key, Object hashKey, Map<Object, Object> value, Long timeout, TimeUnit unit) {
+		return Redis.putAll(redisTemplate, key, value, timeout, unit);
+	}
+
+	@Override
+	public Byte hGetByte(Object key, Object hashKey) {
+		Number value = Redis.hGet(redisTemplate, key, hashKey, Number.class);
+		return value == null ? null : value.byteValue();
+	}
+
+	@Override
+	public Integer hGetInteger(Object key, Object hashKey) {
+		Number value = Redis.hGet(redisTemplate, key, hashKey, Number.class);
+		return value == null ? null : value.intValue();
+	}
+
+	@Override
+	public Long hGetLong(Object key, Object hashKey) {
+		Number value = Redis.hGet(redisTemplate, key, hashKey, Number.class);
+		return value == null ? null : value.longValue();
+	}
+
+	@Override
+	public Double hGetDouble(Object key, Object hashKey) {
+		Number value = Redis.hGet(redisTemplate, key, hashKey, Number.class);
+		return value == null ? null : value.doubleValue();
+	}
+
+	@Override
+	public BigDecimal hGetBigDecimal(Object key, Object hashKey) {
+		Number value = Redis.hGet(redisTemplate, key, hashKey, Number.class);
+		return (BigDecimal) value;
+	}
+
+	@Override
+	public <T> T hGetObject(Object key, Object hashKey, Class<T> clazz) {
+		return Redis.hGet(redisTemplate, key, hashKey, clazz);
+	}
+
+	@Override
+	public <T> List<T> hMultiGetObjects(Object key, Collection<Object> hashKeys, Class<T> clazz) {
+		return Redis.hMultiGet(redisTemplate, key, hashKeys, clazz);
+	}
+
+	@Override
+	public <T> Map<Object, T> hGetAll(Object key, Class<T> clazz) {
+		return Redis.hGetAll(redisTemplate, key, clazz);
+	}
+
+	@Override
+	public boolean hContainKey(Object key, Object hashKey) {
+		return Redis.hContainKey(redisTemplate, key, hashKey);
+	}
+
+	@Override
+	public int delFromHash(Object key, Object hashKey) {
+		return Redis.hDel(redisTemplate, key, new Object[] {hashKey});
+	}
+
+	@Override
+	public int delAllFromHash(Object key, Object[] hashKeys) {
+		return Redis.hDel(redisTemplate, key, hashKeys);
+	}
+
+	@Override
+	public long sizeOfHash(Object key) {
+		return Redis.hLen(redisTemplate, key);
+	}	
 }
