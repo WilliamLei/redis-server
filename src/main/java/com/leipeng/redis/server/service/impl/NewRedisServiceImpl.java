@@ -1550,4 +1550,20 @@ public class NewRedisServiceImpl implements NewRedisService {
 		return pairs;
 	}
 
+	@Override
+	public double increaseScoreInZset(Object key, Object value, double delta) {
+		return Redis.zIncrBy(redisTemplate, key, value, delta);
+	}
+
+	@Override
+	public long sizeOfZSet(Object key) {
+		return Redis.zCard(redisTemplate, key);
+	}
+
+	@Override
+	public long zRank(Object key, Object value) {
+		return Redis.zRank(redisTemplate, key, value);
+	}
+
+	
 }

@@ -332,4 +332,10 @@ public interface NewRedisService {
 
 	<T> Map<T, Double> zRevRangeObjectsByScoreWithScore(Object key, double min, double max, long offset, long limit,
 			Class<T> clazz, boolean reverse);
+	
+	double increaseScoreInZset(Object key, Object value, double delta);
+	
+	long sizeOfZSet(Object key);
+	
+	long zRank(Object key, Object value);
 }
