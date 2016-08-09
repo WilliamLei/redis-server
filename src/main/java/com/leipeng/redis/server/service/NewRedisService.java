@@ -6,369 +6,369 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public interface NewRedisService {
+public interface NewRedisService<K, V> {
 
 	// base key-value
-	void set(Object key, Object value);
+	void set(K key, V value);
 
-	void set(Object key, Object value, Long timeout, TimeUnit unit);
+	void set(K key, V value, Long timeout, TimeUnit unit);
 
-	void multiSet(Map<Object, Object> tuples);
+	void multiSet(Map<K, V> tuples);
 
-	void multiSet(Map<Object, Object> tuples, Long timeout, TimeUnit unit);
+	void multiSet(Map<K, V> tuples, Long timeout, TimeUnit unit);
 
-	String getString(Object key);
+	String getString(K key);
 
-	Byte getByte(Object key);
+	Byte getByte(K key);
 
-	byte getByteValue(Object key);
+	byte getByteValue(K key);
 
-	Integer getInteger(Object key);
+	Integer getInteger(K key);
 
-	int getIntegerValue(Object key);
+	int getIntegerValue(K key);
 
-	Long getLong(Object key);
+	Long getLong(K key);
 
-	long getLongValue(Object key);
+	long getLongValue(K key);
 
-	Double getDouble(Object key);
+	Double getDouble(K key);
 
-	double getDoubleValue(Object key);
+	double getDoubleValue(K key);
 
-	BigDecimal getBigDecimal(Object key);
+	BigDecimal getBigDecimal(K key);
 
-	double getBigDecimalValue(Object key);
+	double getBigDecimalValue(K key);
 
-	<T> T getObj(Object key, Class<T> clazz);
+	<T> T getObj(K key, Class<T> clazz);
 
-	List<String> multiGetString(Collection<Object> keys);
+	List<String> multiGetString(Collection<K> keys);
 
-	<T> List<T> multiGetObject(Collection<Object> keys, Class<T> clazz);
+	<T> List<T> multiGetObject(Collection<K> keys, Class<T> clazz);
 
 	// list
-	void leftPush(Object key, Object value);
+	void leftPush(K key, V value);
 
-	void leftPush(Object key, Object value, Long timeout, TimeUnit unit);
+	void leftPush(K key, V value, Long timeout, TimeUnit unit);
 
-	void leftPushAll(Object key, Object[] values);
+	void leftPushAll(K key, V[] values);
 
-	void leftPushAll(Object key, Object[] values, Long timeout, TimeUnit unit);
+	void leftPushAll(K key, V[] values, Long timeout, TimeUnit unit);
 
-	void rightPush(Object key, Object value);
+	void rightPush(K key, V value);
 
-	void rightPush(Object key, Object value, Long timeout, TimeUnit unit);
+	void rightPush(K key, V value, Long timeout, TimeUnit unit);
 
-	void rightPushAll(Object key, Object[] values);
+	void rightPushAll(K key, V[] values);
 
-	void rightPushAll(Object key, Object[] values, Long timeout, TimeUnit unit);
+	void rightPushAll(K key, V[] values, Long timeout, TimeUnit unit);
 
-	Byte leftPopByte(Object key);
+	Byte leftPopByte(K key);
 
-	List<Byte> leftPopBytes(Object key, int num);
+	List<Byte> leftPopBytes(K key, int num);
 
-	Integer leftPopInteger(Object key);
+	Integer leftPopInteger(K key);
 
-	List<Integer> leftPopIntegers(Object key, int num);
+	List<Integer> leftPopIntegers(K key, int num);
 
-	Long leftPopLong(Object key);
+	Long leftPopLong(K key);
 
-	List<Long> leftPopLongs(Object key, int num);
+	List<Long> leftPopLongs(K key, int num);
 
-	Double leftPopDouble(Object key);
+	Double leftPopDouble(K key);
 
-	List<Double> leftPopDoubles(Object key, int num);
+	List<Double> leftPopDoubles(K key, int num);
 
-	BigDecimal leftPopBigDecimal(Object key);
+	BigDecimal leftPopBigDecimal(K key);
 
-	List<BigDecimal> leftPopBigDecimals(Object key, int num);
+	List<BigDecimal> leftPopBigDecimals(K key, int num);
 
-	<T> T leftPopObject(Object key, Class<T> clazz);
+	<T> T leftPopObject(K key, Class<T> clazz);
 
-	<T> List<T> leftPopObjects(Object key, Class<T> clazz, int num);
+	<T> List<T> leftPopObjects(K key, Class<T> clazz, int num);
 
-	Byte rightleftPopByte(Object key);
+	Byte rightleftPopByte(K key);
 
-	List<Byte> rightPopBytes(Object key, int num);
+	List<Byte> rightPopBytes(K key, int num);
 
-	Integer rightPopInteger(Object key);
+	Integer rightPopInteger(K key);
 
-	List<Integer> rightPopIntegers(Object key, int num);
+	List<Integer> rightPopIntegers(K key, int num);
 
-	Long rightPopLong(Object key);
+	Long rightPopLong(K key);
 
-	List<Long> rightPopLongs(Object key, int num);
+	List<Long> rightPopLongs(K key, int num);
 
-	Double rightPopDouble(Object key);
+	Double rightPopDouble(K key);
 
-	List<Double> rightPopDoubles(Object key, int num);
+	List<Double> rightPopDoubles(K key, int num);
 
-	BigDecimal rightPopBigDecimal(Object key);
+	BigDecimal rightPopBigDecimal(K key);
 
-	List<BigDecimal> rightPopBigDecimals(Object key, int num);
+	List<BigDecimal> rightPopBigDecimals(K key, int num);
 
-	<T> T rightPopObject(Object key, Class<T> clazz);
+	<T> T rightPopObject(K key, Class<T> clazz);
 
-	<T> List<T> rightPopObjects(Object key, Class<T> clazz, int num);
+	<T> List<T> rightPopObjects(K key, Class<T> clazz, int num);
 
-	Byte getByteElementAt(Object key, long index);
+	Byte getByteElementAt(K key, long index);
 
-	byte getByteValueElementAt(Object key, long index);
+	byte getByteValueElementAt(K key, long index);
 
-	Integer getIntegerElementAt(Object key, long index);
+	Integer getIntegerElementAt(K key, long index);
 
-	int getIntegerValueElementAt(Object key, long index);
+	int getIntegerValueElementAt(K key, long index);
 
-	Long getLongElementAt(Object key, long index);
+	Long getLongElementAt(K key, long index);
 
-	long getLongValueElementAt(Object key, long index);
+	long getLongValueElementAt(K key, long index);
 
-	Double getDoubleElementAt(Object key, long index);
+	Double getDoubleElementAt(K key, long index);
 
-	double getDoubleValueElementAt(Object key, long index);
+	double getDoubleValueElementAt(K key, long index);
 
-	BigDecimal getBigDecimalElementAt(Object key, long index);
+	BigDecimal getBigDecimalElementAt(K key, long index);
 
-	double getBigDecimalValueElementAt(Object key, long index);
+	double getBigDecimalValueElementAt(K key, long index);
 
-	void delFromList(Object key, Object value);
+	void delFromList(K key, V value);
 
-	long lengthOfList(Object key);
+	long lengthOfList(K key);
 
 	// Set
-	void sAdd(Object key, Object value);
+	void sAdd(K key, V value);
 
-	void sAdd(Object key, Object value, Long timeout, TimeUnit unit);
+	void sAdd(K key, V value, Long timeout, TimeUnit unit);
 
-	void sAddAll(Object key, Collection<Object> values);
+	void sAddAll(K key, Collection<V> values);
 
-	void sAddAll(Object key, Collection<Object> values, Long timeout, TimeUnit unit);
+	void sAddAll(K key, Collection<V> values, Long timeout, TimeUnit unit);
 
-	Byte randomByte(Object key);
+	Byte randomByte(K key);
 
-	byte randomByteValue(Object key);
+	byte randomByteValue(K key);
 
-	Integer randomInteger(Object key);
+	Integer randomInteger(K key);
 
-	int randomIntegerValue(Object key);
+	int randomIntegerValue(K key);
 
-	Long randomLong(Object key);
+	Long randomLong(K key);
 
-	long randomLongValue(Object key);
+	long randomLongValue(K key);
 
-	Double randomDouble(Object key);
+	Double randomDouble(K key);
 
-	double randomDoubleValue(Object key);
+	double randomDoubleValue(K key);
 
-	BigDecimal randomBigDecimal(Object key);
+	BigDecimal randomBigDecimal(K key);
 
-	double randomBigDecimalValue(Object key);
+	double randomBigDecimalValue(K key);
 
-	<T> T randomObject(Object key, Class<T> clazz);
+	<T> T randomObject(K key, Class<T> clazz);
 
-	List<Byte> randomBytes(Object key, int num);
+	List<Byte> randomBytes(K key, int num);
 
-	List<Integer> randomIntegers(Object key, int num);
+	List<Integer> randomIntegers(K key, int num);
 
-	List<Long> randomLongs(Object key, int num);
+	List<Long> randomLongs(K key, int num);
 
-	List<Double> randomDoubles(Object key, int num);
+	List<Double> randomDoubles(K key, int num);
 
-	List<BigDecimal> randomBigDecimals(Object key, int num);
+	List<BigDecimal> randomBigDecimals(K key, int num);
 
-	<T> List<T> randomObjects(Object key, int num, Class<T> clazz);
+	<T> List<T> randomObjects(K key, int num, Class<T> clazz);
 
-	List<Byte> randomDistinctBytes(Object key, int num);
+	List<Byte> randomDistinctBytes(K key, int num);
 
-	List<Integer> randomDistinctIntegers(Object key, int num);
+	List<Integer> randomDistinctIntegers(K key, int num);
 
-	List<Long> randomDistinctLongs(Object key, int num);
+	List<Long> randomDistinctLongs(K key, int num);
 
-	List<Double> randomDistinctDoubles(Object key, int num);
+	List<Double> randomDistinctDoubles(K key, int num);
 
-	List<BigDecimal> randomDistinctBigDecimals(Object key, int num);
+	List<BigDecimal> randomDistinctBigDecimals(K key, int num);
 
-	<T> List<T> randomDistinctObjects(Object key, int num, Class<T> clazz);
+	<T> List<T> randomDistinctObjects(K key, int num, Class<T> clazz);
 
-	Byte randomPopByte(Object key);
+	Byte randomPopByte(K key);
 
-	byte randomPopByteValue(Object key);
+	byte randomPopByteValue(K key);
 
-	Integer randomPopInteger(Object key);
+	Integer randomPopInteger(K key);
 
-	int randomPopIntegerValue(Object key);
+	int randomPopIntegerValue(K key);
 
-	Long randomPopLong(Object key);
+	Long randomPopLong(K key);
 
-	long randomPopLongValue(Object key);
+	long randomPopLongValue(K key);
 
-	Double randomPopDouble(Object key);
+	Double randomPopDouble(K key);
 
-	double randomPopDoubleValue(Object key);
+	double randomPopDoubleValue(K key);
 
-	BigDecimal randomPopBigDecimal(Object key);
+	BigDecimal randomPopBigDecimal(K key);
 
-	double randomPopBigDecimalValue(Object key);
+	double randomPopBigDecimalValue(K key);
 
-	<T> T randomPopObject(Object key, Class<T> clazz);
+	<T> T randomPopObject(K key, Class<T> clazz);
 
-	List<Byte> randomPopBytes(Object key, int num);
+	List<Byte> randomPopBytes(K key, int num);
 
-	List<Integer> randomPopIntegers(Object key, int num);
+	List<Integer> randomPopIntegers(K key, int num);
 
-	List<Long> randomPopLongs(Object key, int num);
+	List<Long> randomPopLongs(K key, int num);
 
-	List<Double> randomPopDoubles(Object key, int num);
+	List<Double> randomPopDoubles(K key, int num);
 
-	List<BigDecimal> randomPopBigDecimals(Object key, int num);
+	List<BigDecimal> randomPopBigDecimals(K key, int num);
 
-	<T> List<T> randomPopObjects(Object key, int num, Class<T> clazz);
+	<T> List<T> randomPopObjects(K key, int num, Class<T> clazz);
 
-	long sizeOfSet(Object key);
+	long sizeOfSet(K key);
 
 	// Zset
-	void zAdd(Object key, Object value, double score);
+	void zAdd(K key, V value, double score);
 
-	void zAdd(Object key, Object value, double score, Long timeout, TimeUnit unit);
+	void zAdd(K key, V value, double score, Long timeout, TimeUnit unit);
 
-	void zAddAll(Object key, Map<Object, Double> tuples);
+	void zAddAll(K key, Map<V, Double> tuples);
 
-	void zAddAll(Object key, Map<Object, Double> tuples, Long timeout, TimeUnit unit);
+	void zAddAll(K key, Map<V, Double> tuples, Long timeout, TimeUnit unit);
 
-	void delFromZSet(Object key, Object value);
+	void delFromZSet(K key, V value);
 
-	void delFromZSet(Object key, Object[] values);
+	void delFromZSet(K key, Collection<V> values);
 
-	List<Byte> zRangeBytes(Object key, long start, long end);
+	List<Byte> zRangeBytes(K key, long start, long end);
 
-	List<Integer> zRangeIntegers(Object key, long start, long end);
+	List<Integer> zRangeIntegers(K key, long start, long end);
 
-	List<Long> zRangeLongs(Object key, long start, long end);
+	List<Long> zRangeLongs(K key, long start, long end);
 
-	List<Double> zRangeDoubles(Object key, long start, long end);
+	List<Double> zRangeDoubles(K key, long start, long end);
 
-	List<BigDecimal> zRangeBigDecimals(Object key, long start, long end);
+	List<BigDecimal> zRangeBigDecimals(K key, long start, long end);
 
-	<T> List<T> zRangeObjects(Object key, long start, long end, Class<T> clazz);
+	<T> List<T> zRangeObjects(K key, long start, long end, Class<T> clazz);
 
-	Map<Byte, Double> zRangeBytesWithScore(Object key, long start, long end);
+	Map<Byte, Double> zRangeBytesWithScore(K key, long start, long end);
 
-	Map<Integer, Double> zRangeIntegersWithScore(Object key, long start, long end);
+	Map<Integer, Double> zRangeIntegersWithScore(K key, long start, long end);
 
-	Map<Long, Double> zRangeLongsWithScore(Object key, long start, long end);
+	Map<Long, Double> zRangeLongsWithScore(K key, long start, long end);
 
-	Map<Double, Double> zRangeDoublesWithScore(Object key, long start, long end);
+	Map<Double, Double> zRangeDoublesWithScore(K key, long start, long end);
 
-	Map<BigDecimal, Double> zRangeBigDecimalsWithScore(Object key, long start, long end);
+	Map<BigDecimal, Double> zRangeBigDecimalsWithScore(K key, long start, long end);
 
-	<T> Map<T, Double> zRangeObjectsWithScore(Object key, long start, long end, Class<T> clazz);
+	<T> Map<T, Double> zRangeObjectsWithScore(K key, long start, long end, Class<T> clazz);
 
-	List<Byte> zRevRangeBytes(Object key, long start, long end);
+	List<Byte> zRevRangeBytes(K key, long start, long end);
 
-	List<Integer> zRevRangeIntegers(Object key, long start, long end);
+	List<Integer> zRevRangeIntegers(K key, long start, long end);
 
-	List<Long> zRevRangeLongs(Object key, long start, long end);
+	List<Long> zRevRangeLongs(K key, long start, long end);
 
-	List<Double> zRevRangeDoubles(Object key, long start, long end);
+	List<Double> zRevRangeDoubles(K key, long start, long end);
 
-	List<BigDecimal> zRevRangeBigDecimals(Object key, long start, long end);
+	List<BigDecimal> zRevRangeBigDecimals(K key, long start, long end);
 
-	<T> List<T> zRevRangeObjects(Object key, long start, long end, Class<T> clazz);
+	<T> List<T> zRevRangeObjects(K key, long start, long end, Class<T> clazz);
 
-	Map<Byte, Double> zRevRangeBytesWithScore(Object key, long start, long end);
+	Map<Byte, Double> zRevRangeBytesWithScore(K key, long start, long end);
 
-	Map<Integer, Double> zRevRangeIntegersWithScore(Object key, long start, long end);
+	Map<Integer, Double> zRevRangeIntegersWithScore(K key, long start, long end);
 
-	Map<Long, Double> zRevRangeLongsWithScore(Object key, long start, long end);
+	Map<Long, Double> zRevRangeLongsWithScore(K key, long start, long end);
 
-	Map<Double, Double> zRevRangeDoublesWithScore(Object key, long start, long end);
+	Map<Double, Double> zRevRangeDoublesWithScore(K key, long start, long end);
 
-	Map<BigDecimal, Double> zRevRangeBigDecimalsWithScore(Object key, long start, long end);
+	Map<BigDecimal, Double> zRevRangeBigDecimalsWithScore(K key, long start, long end);
 
-	<T> Map<T, Double> zRevRangeObjectsWithScore(Object key, long start, long end, Class<T> clazz);
+	<T> Map<T, Double> zRevRangeObjectsWithScore(K key, long start, long end, Class<T> clazz);
 
-	List<Byte> zRangeBytesByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
+	List<Byte> zRangeBytesByScore(K key, double min, double max, long offset, long limit, boolean reverse);
 
-	List<Integer> zRangeIntegersByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
+	List<Integer> zRangeIntegersByScore(K key, double min, double max, long offset, long limit, boolean reverse);
 
-	List<Long> zRangeLongByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
+	List<Long> zRangeLongByScore(K key, double min, double max, long offset, long limit, boolean reverse);
 
-	List<Double> zRangeDoublesByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
+	List<Double> zRangeDoublesByScore(K key, double min, double max, long offset, long limit, boolean reverse);
 
-	List<BigDecimal> zRangeBigDecimalsByScore(Object key, double min, double max, long offset, long limit,
+	List<BigDecimal> zRangeBigDecimalsByScore(K key, double min, double max, long offset, long limit,
 			boolean reverse);
 
-	<T> List<T> zRangeObjectsByScore(Object key, double min, double max, long offset, long limit, Class<T> clazz,
+	<T> List<T> zRangeObjectsByScore(K key, double min, double max, long offset, long limit, Class<T> clazz,
 			boolean reverse);
 
-	List<Byte> zRevRangeBytesByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
+	List<Byte> zRevRangeBytesByScore(K key, double min, double max, long offset, long limit, boolean reverse);
 
-	List<Integer> zRevRangeIntegersByScore(Object key, double min, double max, long offset, long limit,
+	List<Integer> zRevRangeIntegersByScore(K key, double min, double max, long offset, long limit,
 			boolean reverse);
 
-	List<Long> zRevRangeLongByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
+	List<Long> zRevRangeLongByScore(K key, double min, double max, long offset, long limit, boolean reverse);
 
-	List<Double> zRevRangeDoublesByScore(Object key, double min, double max, long offset, long limit, boolean reverse);
+	List<Double> zRevRangeDoublesByScore(K key, double min, double max, long offset, long limit, boolean reverse);
 
-	List<BigDecimal> zRevRangeBigDecimalsByScore(Object key, double min, double max, long offset, long limit,
+	List<BigDecimal> zRevRangeBigDecimalsByScore(K key, double min, double max, long offset, long limit,
 			boolean reverse);
 
-	<T> List<T> zRevRangeObjectsByScore(Object key, double min, double max, long offset, long limit, Class<T> clazz,
+	<T> List<T> zRevRangeObjectsByScore(K key, double min, double max, long offset, long limit, Class<T> clazz,
 			boolean reverse);
 
-	Map<Byte, Double> zRevRangeBytesByScoreWithScore(Object key, double min, double max, long offset, long limit,
+	Map<Byte, Double> zRevRangeBytesByScoreWithScore(K key, double min, double max, long offset, long limit,
 			boolean reverse);
 
-	Map<Integer, Double> zRevRangeIntegersByScoreWithScore(Object key, double min, double max, long offset, long limit,
+	Map<Integer, Double> zRevRangeIntegersByScoreWithScore(K key, double min, double max, long offset, long limit,
 			boolean reverse);
 
-	Map<Long, Double> zRevRangeLongsByScoreWithScore(Object key, double min, double max, long offset, long limit,
+	Map<Long, Double> zRevRangeLongsByScoreWithScore(K key, double min, double max, long offset, long limit,
 			boolean reverse);
 
-	Map<Double, Double> zRevRangeDoublesByScoreWithScore(Object key, double min, double max, long offset, long limit,
+	Map<Double, Double> zRevRangeDoublesByScoreWithScore(K key, double min, double max, long offset, long limit,
 			boolean reverse);
 
-	Map<BigDecimal, Double> zRevRangeBigDecimalsByScoreWithScore(Object key, double min, double max, long offset,
+	Map<BigDecimal, Double> zRevRangeBigDecimalsByScoreWithScore(K key, double min, double max, long offset,
 			long limit, boolean reverse);
 
-	<T> Map<T, Double> zRevRangeObjectsByScoreWithScore(Object key, double min, double max, long offset, long limit,
+	<T> Map<T, Double> zRevRangeObjectsByScoreWithScore(K key, double min, double max, long offset, long limit,
 			Class<T> clazz, boolean reverse);
 
-	double increaseScoreInZset(Object key, Object value, double delta);
+	double increaseScoreInZset(K key, V value, double delta);
 
-	long sizeOfZSet(Object key);
+	long sizeOfZSet(K key);
 
-	long zRank(Object key, Object value);
+	long zRank(K key, V value);
 
 	// Hash
-	long put(Object key, Object hashKey, Object value);
+	long put(K key, Object hashKey, Object value);
 
-	long put(Object key, Object hashKey, Object value, Long timeout, TimeUnit unit);
+	long put(K key, Object hashKey, Object value, Long timeout, TimeUnit unit);
 
-	long putAll(Object key, Object hashKey, Map<Object, Object> value);
+	long putAll(K key, Object hashKey, Map<Object, Object> value);
 
-	long putAll(Object key, Object hashKey, Map<Object, Object> value, Long timeout, TimeUnit unit);
+	long putAll(K key, Object hashKey, Map<Object, Object> value, Long timeout, TimeUnit unit);
 
-	Byte hGetByte(Object key, Object hashKey);
+	Byte hGetByte(K key, Object hashKey);
 
-	Integer hGetInteger(Object key, Object hashKey);
+	Integer hGetInteger(K key, Object hashKey);
 
-	Long hGetLong(Object key, Object hashKey);
+	Long hGetLong(K key, Object hashKey);
 
-	Double hGetDouble(Object key, Object hashKey);
+	Double hGetDouble(K key, Object hashKey);
 
-	BigDecimal hGetBigDecimal(Object key, Object hashKey);
+	BigDecimal hGetBigDecimal(K key, Object hashKey);
 
-	<T> T hGetObject(Object key, Object hashKey, Class<T> clazz);
+	<T> T hGetObject(K key, Object hashKey, Class<T> clazz);
 
-	<T> List<T> hMultiGetObjects(Object key, Collection<Object> hashKeys, Class<T> clazz);
+	<T> List<T> hMultiGetObjects(K key, Collection<Object> hashKeys, Class<T> clazz);
 
-	<T> Map<Object, T> hGetAll(Object key, Class<T> clazz);
+	<T> Map<Object, T> hGetAll(K key, Class<T> clazz);
 	
-	boolean hContainKey(Object key, Object hashKey);
+	boolean hContainKey(K key, Object hashKey);
 	
-	int delFromHash(Object key, Object hashKey);
+	int delFromHash(K key, Object hashKey);
 	
-	int delAllFromHash(Object key, Object[] hashKeys);
+	int delAllFromHash(K key, Object[] hashKeys);
 	
-	long sizeOfHash(Object key);
+	long sizeOfHash(K key);
 }

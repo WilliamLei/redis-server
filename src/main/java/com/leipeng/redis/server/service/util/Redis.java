@@ -146,20 +146,21 @@ public class Redis {
 		}
 	}
 
-	public static <K, V> void saddAll(final RedisTemplate<K, V> redisTemplate, final K key, final V[] values,
+	public static <K, V> void saddAll(final RedisTemplate<K, V> redisTemplate, final K key, final Collection<V> values,
 			Long expireTime, TimeUnit unit) {
-		if (key == null || StringUtils.isEmpty(key.toString()) || values == null || values.length <= 0) {
+		if (key == null || StringUtils.isEmpty(key.toString()) || values == null || values.size() <= 0) {
 			return;
 		}
+		
 		final Long finalExpireTime = Redis.convert(expireTime, unit);
 
 		if (finalExpireTime == null || finalExpireTime.longValue() <= 0) {
-			redisTemplate.opsForSet().add(key, values);
+			redisTemplate.opsForSet().add(key, (V[]) values.toArray());
 		} else {
 			redisTemplate.executePipelined(new RedisCallback<Object>() {
 				@Override
 				public Object doInRedis(RedisConnection connection) throws DataAccessException {
-					byte[][] valuesBytes = new byte[values.length][];
+					byte[][] valuesBytes = new byte[values.size()][];
 					int i = 0;
 					for (V value : values) {
 						valuesBytes[i++] = serializeValue(redisTemplate, value);
@@ -173,7 +174,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> Set<T> sDiff(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+	public static final <K, V, T> Set<T> sDiff(RedisTemplate<K, V> redisTemplate, K key1, K key2,
 			Class<T> clazz) {
 		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2)) {
 			return null;
@@ -182,7 +183,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> Set<T> sDiff(RedisTemplate<K, V> redisTemplate, K key,
+	public static final <K, V, T> Set<T> sDiff(RedisTemplate<K, V> redisTemplate, K key,
 			Collection<K> otherKeys, Class<T> clazz) {
 		if (StringUtils.isEmpty(key) || otherKeys == null || otherKeys.size() <= 0) {
 			return null;
@@ -190,7 +191,7 @@ public class Redis {
 		return (Set<T>) redisTemplate.opsForSet().difference(key, otherKeys);
 	}
 
-	public static final <K, V, T extends V> long sDiffAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+	public static final <K, V, T> long sDiffAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2,
 			K storeKey) {
 
 		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2) || StringUtils.isEmpty(storeKey)) {
@@ -202,7 +203,7 @@ public class Redis {
 		return ret == null ? 0 : ret.longValue();
 	}
 
-	public static final <K, V, T extends V> long sDiffAndStore(RedisTemplate<K, V> redisTemplate, K key1,
+	public static final <K, V, T> long sDiffAndStore(RedisTemplate<K, V> redisTemplate, K key1,
 			Collection<K> otherKeys, K storeKey) {
 
 		if (StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0 || StringUtils.isEmpty(storeKey)) {
@@ -215,7 +216,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> Set<T> sInter(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+	public static final <K, V, T> Set<T> sInter(RedisTemplate<K, V> redisTemplate, K key1, K key2,
 			Class<T> clazz) {
 		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2)) {
 			return null;
@@ -224,7 +225,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> Set<T> sInter(RedisTemplate<K, V> redisTemplate, K key1,
+	public static final <K, V, T> Set<T> sInter(RedisTemplate<K, V> redisTemplate, K key1,
 			Collection<K> otherKeys, Class<T> clazz) {
 		if (StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0) {
 			return null;
@@ -233,7 +234,7 @@ public class Redis {
 		return (Set<T>) redisTemplate.opsForSet().intersect(key1, otherKeys);
 	}
 
-	public static final <K, V, T extends V> long sInterAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+	public static final <K, V, T> long sInterAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2,
 			K storeKey) {
 		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2) || StringUtils.isEmpty(storeKey)) {
 			return 0;
@@ -244,7 +245,7 @@ public class Redis {
 		return ret == null ? 0 : ret.longValue();
 	}
 
-	public static final <K, V, T extends V> long sInterAndStore(RedisTemplate<K, V> redisTemplate, K key1,
+	public static final <K, V, T> long sInterAndStore(RedisTemplate<K, V> redisTemplate, K key1,
 			Collection<K> otherKeys, K storeKey) {
 		if (StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0 || StringUtils.isEmpty(storeKey)) {
 			return 0;
@@ -263,7 +264,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> Set<T> members(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz) {
+	public static final <K, V, T> Set<T> members(RedisTemplate<K, V> redisTemplate, K key, Class<T> clazz) {
 		if (StringUtils.isEmpty(key)) {
 			return null;
 		}
@@ -271,7 +272,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> List<T> randomMembers(RedisTemplate<K, V> redisTemplate, K key, int count,
+	public static final <K, V, T> List<T> randomMembers(RedisTemplate<K, V> redisTemplate, K key, int count,
 			Class<T> clazz) {
 		if (StringUtils.isEmpty(key) || count <= 0) {
 			return null;
@@ -287,7 +288,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> List<T> randomDistinctMembers(RedisTemplate<K, V> redisTemplate, K key,
+	public static final <K, V, T> List<T> randomDistinctMembers(RedisTemplate<K, V> redisTemplate, K key,
 			int count, Class<T> clazz) {
 		if (StringUtils.isEmpty(key) || count <= 0) {
 			return null;
@@ -302,7 +303,7 @@ public class Redis {
 		return (List<T>) redisTemplate.opsForSet().distinctRandomMembers(key, count);
 	}
 
-	public static final <K, V, T extends V> List<T> randomPopMembers(final RedisTemplate<K, V> redisTemplate,
+	public static final <K, V, T> List<T> randomPopMembers(final RedisTemplate<K, V> redisTemplate,
 			final K key, final int count, final Class<T> clazz) {
 		if (StringUtils.isEmpty(key) || count <= 0) {
 			return null;
@@ -328,7 +329,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> Set<T> union(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+	public static final <K, V, T> Set<T> union(RedisTemplate<K, V> redisTemplate, K key1, K key2,
 			Class<T> clazz) {
 		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2)) {
 			return null;
@@ -338,7 +339,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> Set<T> union(RedisTemplate<K, V> redisTemplate, K key1,
+	public static final <K, V, T> Set<T> union(RedisTemplate<K, V> redisTemplate, K key1,
 			Collection<K> otherKeys, Class<T> clazz) {
 		if (StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0) {
 			return null;
@@ -347,7 +348,7 @@ public class Redis {
 		return (Set<T>) redisTemplate.opsForSet().union(key1, otherKeys);
 	}
 
-	public static final <K, V, T extends V> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2,
+	public static final <K, V, T> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1, K key2,
 			K storeKey) {
 		if (StringUtils.isEmpty(key1) || StringUtils.isEmpty(key2) || StringUtils.isEmpty(storeKey)) {
 			return 0;
@@ -358,7 +359,7 @@ public class Redis {
 		return ret == null ? 0 : ret.longValue();
 	}
 
-	public static final <K, V, T extends V> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1,
+	public static final <K, V, T> long unionAndStore(RedisTemplate<K, V> redisTemplate, K key1,
 			Collection<K> otherKeys, K storeKey) {
 		if (StringUtils.isEmpty(key1) || otherKeys == null || otherKeys.size() <= 0 || StringUtils.isEmpty(storeKey)) {
 			return 0;
@@ -620,7 +621,7 @@ public class Redis {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <K, V, T extends V> T elementAt(RedisTemplate<K, V> redisTemplate, K key, long index,
+	public static final <K, V, T> T elementAt(RedisTemplate<K, V> redisTemplate, K key, long index,
 			Class<T> clazz) {
 		if (StringUtils.isEmpty(key) || index < 0) {
 			return null;
@@ -833,11 +834,11 @@ public class Redis {
 		return ret == null ? 0 : ret.doubleValue();
 	}
 
-	public static final <K, V> long zRemove(RedisTemplate<K, V> redisTemplate, K key, V[] values) {
+	public static final <K, V> long zRemove(RedisTemplate<K, V> redisTemplate, K key, Collection<V> values) {
 		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(values)) {
 			return 0;
 		}
-		Long ret = redisTemplate.opsForZSet().remove(key, values);
+		Long ret = redisTemplate.opsForZSet().remove(key, values.toArray());
 		return ret == null ? 0 : ret.longValue();
 	}
 
@@ -859,7 +860,7 @@ public class Redis {
 
 	// Map
 	public static final <K, V> long put(final RedisTemplate<K, V> redisTemplate, final K key, final Object hashKey,
-			final V value, Long timeout, TimeUnit unit) {
+			final Object value, Long timeout, TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || value == null) {
 			return 0;
 		}
@@ -891,7 +892,7 @@ public class Redis {
 		return ret;
 	}
 
-	public static final <K, V> long putAll(final RedisTemplate<K, V> redisTemplate, final K key, final Map<K, V> tuples,
+	public static final <K, V> long putAll(final RedisTemplate<K, V> redisTemplate, final K key, final Map<Object, Object> tuples,
 			Long timeout, TimeUnit unit) {
 		if (StringUtils.isEmpty(key) || tuples == null || tuples.size() <= 0) {
 			return 0;
@@ -904,7 +905,7 @@ public class Redis {
 			@Override
 			public Long doInRedis(RedisConnection connection) throws DataAccessException {
 				Map<byte[], byte[]> values = new LinkedHashMap<byte[], byte[]>();
-				for (Map.Entry<K, V> tuple : tuples.entrySet()) {
+				for (Map.Entry<Object, Object> tuple : tuples.entrySet()) {
 					values.put(serializeHashKey(redisTemplate, tuple.getKey()),
 							serializeHashValue(redisTemplate, tuple.getValue()));
 				}
