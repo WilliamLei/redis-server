@@ -1659,4 +1659,14 @@ public class NewRedisServiceImpl<K, V> implements NewRedisService<K, V> {
 	public long sizeOfHash(K key) {
 		return Redis.hLen(redisTemplate, key);
 	}
+
+	@Override
+	public Boolean setNx(K key, V value) {
+		return Redis.setNx(redisTemplate, key, value);
+	}
+
+	@Override
+	public void delete(K key) {
+		Redis.delete(redisTemplate, key);
+	}
 }

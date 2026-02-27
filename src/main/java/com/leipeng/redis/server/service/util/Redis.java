@@ -123,6 +123,21 @@ public class Redis {
 		return ret;
 	}
 
+	public static final <K, V> Boolean setNx(RedisTemplate<K, V> redisTemplate, K key, V value) {
+		if (key == null || StringUtils.isEmpty(key.toString()) || value == null
+				|| StringUtils.isEmpty(value.toString())) {
+			return false;
+		}
+		return redisTemplate.opsForValue().setIfAbsent(key, value);
+	}
+
+	public static final <K, V> void delete(RedisTemplate<K, V> redisTemplate, K key) {
+		if (key == null || StringUtils.isEmpty(key.toString())) {
+			return;
+		}
+		redisTemplate.delete(key);
+	}
+
 	// Set
 	@SuppressWarnings("unchecked")
 	public static <K, V> void sadd(final RedisTemplate<K, V> redisTemplate, final K key, final V value, Long expireTime,
