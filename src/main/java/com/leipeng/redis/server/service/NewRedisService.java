@@ -371,4 +371,9 @@ public interface NewRedisService<K, V> {
 	int delAllFromHash(K key, Object[] hashKeys);
 	
 	long sizeOfHash(K key);
+
+	// for lock
+	Boolean setNx(K key, V value);
+
+	void delete(K key);
 }
